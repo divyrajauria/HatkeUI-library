@@ -1,4 +1,4 @@
-<title>Nudge</title>
+<title>Hatke UI</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Ten everyday UI components with considered micro-interactions. Copy one, paste it, it works.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,17 +10,17 @@
   --display:"Bricolage Grotesque", "Inter", system-ui, sans-serif;
   --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --nd-accent:#2F54EB; --nd-ink:#121418; --nd-paper:#FFFFFF; --nd-line:#C9CED6; --nd-muted:#DDE1E7;
-  --nd-sub:#5A606C; --nd-danger:#D92D20; --nd-knob:#FFFFFF; --nd-on-accent:#FFFFFF;
+  --hk-accent:#2F54EB; --hk-ink:#121418; --hk-paper:#FFFFFF; --hk-line:#C9CED6; --hk-muted:#DDE1E7;
+  --hk-sub:#5A606C; --hk-danger:#D92D20; --hk-knob:#FFFFFF; --hk-on-accent:#FFFFFF;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#0D0F12; --surface:#15181D; --ink:#ECEEF2; --sub:#9EA5B1; --line:#2A2F37; --accent:#7B93FF;
-  --nd-accent:#7B93FF; --nd-ink:#ECEEF2; --nd-paper:#15181D; --nd-line:#3A404A; --nd-muted:#2C313A;
-  --nd-sub:#9EA5B1; --nd-danger:#FF7366; --nd-knob:#F4F5F7; --nd-on-accent:#0B0D10; color-scheme:dark }}
+  --hk-accent:#7B93FF; --hk-ink:#ECEEF2; --hk-paper:#15181D; --hk-line:#3A404A; --hk-muted:#2C313A;
+  --hk-sub:#9EA5B1; --hk-danger:#FF7366; --hk-knob:#F4F5F7; --hk-on-accent:#0B0D10; color-scheme:dark }}
 :root[data-theme="dark"]{
   --bg:#0D0F12; --surface:#15181D; --ink:#ECEEF2; --sub:#9EA5B1; --line:#2A2F37; --accent:#7B93FF;
-  --nd-accent:#7B93FF; --nd-ink:#ECEEF2; --nd-paper:#15181D; --nd-line:#3A404A; --nd-muted:#2C313A;
-  --nd-sub:#9EA5B1; --nd-danger:#FF7366; --nd-knob:#F4F5F7; --nd-on-accent:#0B0D10; color-scheme:dark }
+  --hk-accent:#7B93FF; --hk-ink:#ECEEF2; --hk-paper:#15181D; --hk-line:#3A404A; --hk-muted:#2C313A;
+  --hk-sub:#9EA5B1; --hk-danger:#FF7366; --hk-knob:#F4F5F7; --hk-on-accent:#0B0D10; color-scheme:dark }
 
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-padding-top:72px}
@@ -59,7 +59,7 @@ code{font-family:var(--mono);font-size:.88em}
 .stage{position:relative;display:grid;place-items:center;padding:24px 20px;border-block:1px solid var(--line);
   background-color:var(--bg);background-image:radial-gradient(color-mix(in srgb,var(--sub) 28%,transparent) 1px,transparent 1.2px);background-size:16px 16px;overflow:hidden;min-width:0}
 .stage-inner{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;gap:14px;width:100%;min-width:0}
-.stage .nd-toasts{position:absolute;right:16px;bottom:16px;width:min(320px,calc(100% - 32px))}
+.stage .hk-toasts{position:absolute;right:16px;bottom:16px;width:min(320px,calc(100% - 32px))}
 #toasts .stage{min-height:300px}
 .card-b{padding:18px 20px 20px;display:grid;gap:14px;min-width:0}
 .idea b{font-weight:600}
@@ -96,7 +96,7 @@ pre.code{margin:0;max-height:340px;overflow:auto;padding:16px;border-radius:12px
 <div class="wrap">
   <header class="top">
     <span class="eyebrow">v0 · ten components · HTML, CSS and plain JS</span>
-    <h1 aria-label="Nudge"><span>N</span><span>u</span><span>d</span><span>g</span><span>e</span></h1>
+    <h1 aria-label="Hatke UI"><span>H</span><span>a</span><span>t</span><span>k</span><span>e</span> <span>U</span><span>I</span></h1>
     <p class="lede">Everyday controls with one considered idea about motion each. Copy one, paste it into your page, and it works.</p>
   </header>
 
@@ -104,11 +104,11 @@ pre.code{margin:0;max-height:340px;overflow:auto;padding:16px;border-radius:12px
     <div><b>Copy, paste, done.</b><p>Each component is one block of HTML, CSS and a few lines of JavaScript. No install, no framework, no dependencies.</p></div>
     <div><b>Make it yours.</b><p>Set these once and every component follows.</p>
 <pre>:root {
-  --nd-accent: #2f54eb;
-  --nd-ink: #121418;
-  --nd-paper: #ffffff;
-  --nd-line: #c9ced6;
-  --nd-muted: #dde1e7;
+  --hk-accent: #2f54eb;
+  --hk-ink: #121418;
+  --hk-paper: #ffffff;
+  --hk-line: #c9ced6;
+  --hk-muted: #dde1e7;
 }</pre></div>
     <div><b>Moves on purpose.</b><p>Feedback on press. Motion follows direction. State changes first, animation second. A refusal is a shake. With reduced motion on, the state still changes and the travel is switched off.</p></div>
   </section>
@@ -118,7 +118,7 @@ pre.code{margin:0;max-height:340px;overflow:auto;padding:16px;border-radius:12px
   <main id="main" class="grid"><!--@CARDS@-->
   </main>
 
-  <footer class="foot"><span>Nudge · working name · v0</span><span>Keyboard: Tab, Space, Enter, arrows, Escape</span></footer>
+  <footer class="foot"><span>Hatke UI · v0</span><span>Keyboard: Tab, Space, Enter, arrows, Escape</span></footer>
 </div>
 
 <script>
@@ -144,7 +144,7 @@ document.querySelectorAll('.card').forEach(function (card) {
   view.addEventListener('click', function () { show(pre.hidden); });
 });
 var fail = document.getElementById('fail-next');
-if (fail) fail.addEventListener('change', function () { document.querySelector('#button .nd-btn').dataset.fail = String(fail.checked); });
+if (fail) fail.addEventListener('change', function () { document.querySelector('#button .hk-btn').dataset.fail = String(fail.checked); });
 </script>
 <script>
 /* ---- components (generated from components/*.html) ---- */

@@ -1,9 +1,9 @@
-# Nudge
+# Hatke UI
 
 Everyday UI components with one considered idea about motion each.
 Copy one, paste it into your page, and it works: HTML, CSS and a few lines of plain JavaScript, no dependencies.
 
-> Nudge is a working name. v0, ten components.
+> v0, ten components. *Hatke* is Hindi for “offbeat”: standard controls, moved differently.
 
 ## The ten
 
@@ -36,14 +36,14 @@ Every component reads these variables, with fallbacks, so it works with none of 
 
 ```css
 :root {
-  --nd-accent: #2f54eb;  /* the one accent */
-  --nd-ink: #121418;     /* text, dark fills */
-  --nd-paper: #ffffff;   /* surfaces */
-  --nd-line: #c9ced6;    /* borders */
-  --nd-muted: #dde1e7;   /* tracks, hovers */
-  --nd-sub: #5a606c;     /* secondary text */
-  --nd-danger: #d92d20;  /* errors */
-  --nd-on-accent: #fff;  /* icons on accent and danger */
+  --hk-accent: #2f54eb;  /* the one accent */
+  --hk-ink: #121418;     /* text, dark fills */
+  --hk-paper: #ffffff;   /* surfaces */
+  --hk-line: #c9ced6;    /* borders */
+  --hk-muted: #dde1e7;   /* tracks, hovers */
+  --hk-sub: #5a606c;     /* secondary text */
+  --hk-danger: #d92d20;  /* errors */
+  --hk-on-accent: #fff;  /* icons on accent and danger */
 }
 ```
 

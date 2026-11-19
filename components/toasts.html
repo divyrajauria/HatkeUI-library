@@ -1,63 +1,63 @@
-<!-- Nudge · Toast stack · v0 -->
-<button class="nd-toast-trigger" type="button" data-toast="Invite sent to sam@studio.co|Link copied|Changes saved|3 files uploaded">Show a toast</button>
-<ol class="nd-toasts" aria-live="polite" aria-label="Notifications"></ol>
+<!-- Hatke UI · Toast stack · v0 -->
+<button class="hk-toast-trigger" type="button" data-toast="Invite sent to sam@studio.co|Link copied|Changes saved|3 files uploaded">Show a toast</button>
+<ol class="hk-toasts" aria-live="polite" aria-label="Notifications"></ol>
 
 <style>
-.nd-toast-trigger {
-  min-height: 44px; padding: 0 18px; border: 1px solid var(--nd-line, #d6dae0); border-radius: 999px;
-  background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); font: inherit; font-weight: 500; cursor: pointer;
+.hk-toast-trigger {
+  min-height: 44px; padding: 0 18px; border: 1px solid var(--hk-line, #d6dae0); border-radius: 999px;
+  background: var(--hk-paper, #fff); color: var(--hk-ink, #121418); font: inherit; font-weight: 500; cursor: pointer;
   transition: transform .3s cubic-bezier(.34,1.56,.64,1), border-color .18s;
 }
-.nd-toast-trigger:hover { border-color: var(--nd-ink, #121418); }
-.nd-toast-trigger:active { transform: scale(.96); transition-duration: .12s; }
-.nd-toast-trigger:focus-visible { outline: 2px solid var(--nd-accent, #2f54eb); outline-offset: 2px; }
-.nd-toasts {
-  --a: var(--nd-accent, #2f54eb);
+.hk-toast-trigger:hover { border-color: var(--hk-ink, #121418); }
+.hk-toast-trigger:active { transform: scale(.96); transition-duration: .12s; }
+.hk-toast-trigger:focus-visible { outline: 2px solid var(--hk-accent, #2f54eb); outline-offset: 2px; }
+.hk-toasts {
+  --a: var(--hk-accent, #2f54eb);
   position: fixed; right: 16px; bottom: 16px; z-index: 50; width: min(340px, calc(100vw - 32px));
   margin: 0; padding: 0; list-style: none;
 }
-.nd-toast {
+.hk-toast {
   --i: 0;
   position: absolute; right: 0; bottom: 0; left: 0; display: flex; align-items: center; gap: 10px;
-  min-height: 56px; padding: 6px 6px 6px 14px; border: 1px solid var(--nd-line, #d6dae0); border-radius: 14px;
-  background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); box-shadow: 0 6px 24px rgba(15,20,30,.12);
+  min-height: 56px; padding: 6px 6px 6px 14px; border: 1px solid var(--hk-line, #d6dae0); border-radius: 14px;
+  background: var(--hk-paper, #fff); color: var(--hk-ink, #121418); box-shadow: 0 6px 24px rgba(15,20,30,.12);
   font-size: 14px; touch-action: pan-y; transform-origin: 50% 100%;
   transform: translateY(calc(var(--i) * -10px)) scale(calc(1 - var(--i) * .05));
   transition: transform .34s cubic-bezier(.2,.8,.2,1), opacity .3s, translate .3s cubic-bezier(.2,.8,.2,1);
-  animation: nd-toast-in .34s cubic-bezier(.2,.8,.2,1);
+  animation: hk-toast-in .34s cubic-bezier(.2,.8,.2,1);
 }
-.nd-toast::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 10px; } /* bridges the gap while fanned out */
-.nd-toasts:hover .nd-toast, .nd-toasts:focus-within .nd-toast { transform: translateY(calc(var(--i) * (-100% - 8px))); }
-.nd-toast.is-hidden { opacity: 0; pointer-events: none; }
-.nd-toast.is-out { opacity: 0; translate: calc(var(--sx, 1) * 110%) 0; pointer-events: none; }
-.nd-toast__dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--a); }
-.nd-toast__text { flex: 1; min-width: 0; }
-.nd-toast__close {
+.hk-toast::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 10px; } /* bridges the gap while fanned out */
+.hk-toasts:hover .hk-toast, .hk-toasts:focus-within .hk-toast { transform: translateY(calc(var(--i) * (-100% - 8px))); }
+.hk-toast.is-hidden { opacity: 0; pointer-events: none; }
+.hk-toast.is-out { opacity: 0; translate: calc(var(--sx, 1) * 110%) 0; pointer-events: none; }
+.hk-toast__dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--a); }
+.hk-toast__text { flex: 1; min-width: 0; }
+.hk-toast__close {
   flex: none; width: 44px; height: 44px; border: 0; border-radius: 10px; background: none;
-  color: var(--nd-sub, #5a606c); font: inherit; font-size: 20px; line-height: 1; cursor: pointer;
+  color: var(--hk-sub, #5a606c); font: inherit; font-size: 20px; line-height: 1; cursor: pointer;
 }
-.nd-toast__close:hover { background: var(--nd-muted, #eceef2); color: var(--nd-ink, #121418); }
-.nd-toast__close:focus-visible { outline: 2px solid var(--a); outline-offset: -2px; }
-.nd-toast__bar {
+.hk-toast__close:hover { background: var(--hk-muted, #eceef2); color: var(--hk-ink, #121418); }
+.hk-toast__close:focus-visible { outline: 2px solid var(--a); outline-offset: -2px; }
+.hk-toast__bar {
   position: absolute; left: 14px; right: 14px; bottom: 5px; height: 2px; border-radius: 2px;
-  background: var(--a); opacity: .45; transform-origin: left; animation: nd-toast-timer 4.5s linear forwards;
+  background: var(--a); opacity: .45; transform-origin: left; animation: hk-toast-timer 4.5s linear forwards;
 }
-.nd-toasts:hover .nd-toast__bar, .nd-toasts:focus-within .nd-toast__bar { animation-play-state: paused; }
-@keyframes nd-toast-in { from { transform: translateY(120%); opacity: 0; } }
-@keyframes nd-toast-timer { to { transform: scaleX(0); } }
+.hk-toasts:hover .hk-toast__bar, .hk-toasts:focus-within .hk-toast__bar { animation-play-state: paused; }
+@keyframes hk-toast-in { from { transform: translateY(120%); opacity: 0; } }
+@keyframes hk-toast-timer { to { transform: scaleX(0); } }
 @media (prefers-reduced-motion: reduce) {
-  .nd-toast { animation: none; transition: opacity .2s; }
-  .nd-toast.is-out { translate: 0 0; }
+  .hk-toast { animation: none; transition: opacity .2s; }
+  .hk-toast.is-out { translate: 0 0; }
 }
 </style>
 
 <script>
 (function(){
-    var region = document.querySelector('.nd-toasts');
-    if (!region || region.hasAttribute('data-nd')) return;
-    region.setAttribute('data-nd', '');
+    var region = document.querySelector('.hk-toasts');
+    if (!region || region.hasAttribute('data-hk')) return;
+    region.setAttribute('data-hk', '');
     function layout() {
-      [].slice.call(region.querySelectorAll('.nd-toast:not(.is-out)')).reverse().forEach(function (t, i) {
+      [].slice.call(region.querySelectorAll('.hk-toast:not(.is-out)')).reverse().forEach(function (t, i) {
         t.style.setProperty('--i', i);
         t.classList.toggle('is-hidden', i > 2);
       });
@@ -69,14 +69,14 @@
       layout();
       setTimeout(function () { t.remove(); }, 340);
     }
-    window.ndToast = function (text) {
+    window.hkToast = function (text) {
       var t = document.createElement('li');
-      t.className = 'nd-toast';
-      t.innerHTML = '<span class="nd-toast__dot" aria-hidden="true"></span><span class="nd-toast__text"></span>' +
-        '<button type="button" class="nd-toast__close" aria-label="Dismiss">×</button><span class="nd-toast__bar" aria-hidden="true"></span>';
-      t.querySelector('.nd-toast__text').textContent = text;
-      t.querySelector('.nd-toast__close').addEventListener('click', function () { dismiss(t); });
-      t.querySelector('.nd-toast__bar').addEventListener('animationend', function () { dismiss(t); });
+      t.className = 'hk-toast';
+      t.innerHTML = '<span class="hk-toast__dot" aria-hidden="true"></span><span class="hk-toast__text"></span>' +
+        '<button type="button" class="hk-toast__close" aria-label="Dismiss">×</button><span class="hk-toast__bar" aria-hidden="true"></span>';
+      t.querySelector('.hk-toast__text').textContent = text;
+      t.querySelector('.hk-toast__close').addEventListener('click', function () { dismiss(t); });
+      t.querySelector('.hk-toast__bar').addEventListener('animationend', function () { dismiss(t); });
       var x0 = null, dx = 0; // swipe to dismiss
       t.addEventListener('pointerdown', function (e) {
         if (e.target.closest('button')) return;
@@ -91,13 +91,13 @@
       t.addEventListener('pointerup', end);
       t.addEventListener('pointercancel', end);
       region.appendChild(t);
-      var live = region.querySelectorAll('.nd-toast:not(.is-out)');
+      var live = region.querySelectorAll('.hk-toast:not(.is-out)');
       if (live.length > 5) dismiss(live[0]);
       layout();
     };
-    document.querySelectorAll('.nd-toast-trigger').forEach(function (b) {
+    document.querySelectorAll('.hk-toast-trigger').forEach(function (b) {
       var msgs = (b.dataset.toast || 'Done').split('|'), n = 0;
-      b.addEventListener('click', function () { window.ndToast(msgs[n++ % msgs.length]); });
+      b.addEventListener('click', function () { window.hkToast(msgs[n++ % msgs.length]); });
     });
   })();
 </script>

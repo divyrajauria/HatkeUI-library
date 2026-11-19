@@ -1,49 +1,49 @@
-<!-- Nudge · Tooltip · v0 -->
-<div class="nd-tip" role="group" aria-label="Formatting">
+<!-- Hatke UI · Tooltip · v0 -->
+<div class="hk-tip" role="group" aria-label="Formatting">
   <button type="button" aria-label="Bold" aria-pressed="false" data-key="⌘B" aria-keyshortcuts="Meta+B"><b>B</b></button>
   <button type="button" aria-label="Italic" aria-pressed="false" data-key="⌘I" aria-keyshortcuts="Meta+I"><i>I</i></button>
   <button type="button" aria-label="Underline" aria-pressed="false" data-key="⌘U" aria-keyshortcuts="Meta+U"><u>U</u></button>
   <button type="button" aria-label="Strikethrough" aria-pressed="false" data-key="⇧⌘X" aria-keyshortcuts="Shift+Meta+X"><s>S</s></button>
-  <span class="nd-tip__bubble" aria-hidden="true"><span class="nd-tip__text"></span><kbd></kbd></span>
+  <span class="hk-tip__bubble" aria-hidden="true"><span class="hk-tip__text"></span><kbd></kbd></span>
 </div>
 
 <style>
-.nd-tip {
-  --a: var(--nd-accent, #2f54eb);
+.hk-tip {
+  --a: var(--hk-accent, #2f54eb);
   position: relative; display: inline-flex; gap: 4px; padding: 4px;
-  border: 1px solid var(--nd-line, #d6dae0); border-radius: 14px; background: var(--nd-paper, #fff);
+  border: 1px solid var(--hk-line, #d6dae0); border-radius: 14px; background: var(--hk-paper, #fff);
 }
-.nd-tip > button {
-  width: 44px; height: 44px; border: 0; border-radius: 10px; background: none; color: var(--nd-ink, #121418);
+.hk-tip > button {
+  width: 44px; height: 44px; border: 0; border-radius: 10px; background: none; color: var(--hk-ink, #121418);
   font: inherit; font-size: 16px; cursor: pointer; -webkit-tap-highlight-color: transparent;
   transition: background-color .18s, color .18s, transform .3s cubic-bezier(.34,1.56,.64,1);
 }
-.nd-tip > button:hover { background: var(--nd-muted, #eceef2); }
-.nd-tip > button[aria-pressed="true"] { background: var(--nd-muted, #eceef2); color: var(--a); }
-.nd-tip > button:active { transform: scale(.9); transition-duration: .18s, .18s, .12s; }
-.nd-tip > button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }
-.nd-tip__bubble {
+.hk-tip > button:hover { background: var(--hk-muted, #eceef2); }
+.hk-tip > button[aria-pressed="true"] { background: var(--hk-muted, #eceef2); color: var(--a); }
+.hk-tip > button:active { transform: scale(.9); transition-duration: .18s, .18s, .12s; }
+.hk-tip > button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }
+.hk-tip__bubble {
   position: absolute; bottom: calc(100% + 10px); left: 0; display: flex; align-items: center; gap: 8px;
-  padding: 6px 10px; border-radius: 9px; background: var(--nd-ink, #121418); color: var(--nd-paper, #fff);
+  padding: 6px 10px; border-radius: 9px; background: var(--hk-ink, #121418); color: var(--hk-paper, #fff);
   font-size: 13px; line-height: 1.3; white-space: nowrap; pointer-events: none; opacity: 0;
   transform: translateX(-50%) translateY(4px) scale(.94); transform-origin: 50% 100%;
   transition: opacity .16s, transform .2s cubic-bezier(.2,.8,.2,1), left .2s cubic-bezier(.2,.8,.2,1);
 }
-.nd-tip__bubble::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border: 5px solid transparent; border-top-color: var(--nd-ink, #121418); }
-.nd-tip__bubble.is-on { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
-.nd-tip__bubble.no-glide { transition: none; }
-.nd-tip__bubble kbd { font: inherit; font-size: 12px; opacity: .6; }
+.hk-tip__bubble::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border: 5px solid transparent; border-top-color: var(--hk-ink, #121418); }
+.hk-tip__bubble.is-on { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
+.hk-tip__bubble.no-glide { transition: none; }
+.hk-tip__bubble kbd { font: inherit; font-size: 12px; opacity: .6; }
 @media (prefers-reduced-motion: reduce) {
-  .nd-tip__bubble, .nd-tip__bubble.is-on { transform: translateX(-50%); transition: opacity .16s; }
-  .nd-tip > button { transition: none; }
+  .hk-tip__bubble, .hk-tip__bubble.is-on { transform: translateX(-50%); transition: opacity .16s; }
+  .hk-tip > button { transition: none; }
 }
 </style>
 
 <script>
 (function(){
-    document.querySelectorAll('.nd-tip:not([data-nd])').forEach(function (g) {
-      g.setAttribute('data-nd', '');
-      var tip = g.querySelector('.nd-tip__bubble'), txt = tip.querySelector('.nd-tip__text'), kbd = tip.querySelector('kbd');
+    document.querySelectorAll('.hk-tip:not([data-hk])').forEach(function (g) {
+      g.setAttribute('data-hk', '');
+      var tip = g.querySelector('.hk-tip__bubble'), txt = tip.querySelector('.hk-tip__text'), kbd = tip.querySelector('kbd');
       var warm = false, showT, hideT, coolT;
       function move(b) {
         txt.textContent = b.getAttribute('aria-label');

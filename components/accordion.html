@@ -1,61 +1,61 @@
-<!-- Nudge · Accordion · v0 -->
-<div class="nd-acc">
-  <div class="nd-acc__item">
-    <h3 class="nd-acc__h"><button type="button" id="nd-acc-b1" aria-expanded="true" aria-controls="nd-acc-1">Can I change the colours?<span class="nd-acc__icon" aria-hidden="true"></span></button></h3>
-    <div class="nd-acc__panel" id="nd-acc-1" role="region" aria-labelledby="nd-acc-b1" data-open>
-      <div class="nd-acc__inner"><p>Yes. Every component reads a few CSS variables, such as --nd-accent and --nd-ink.</p><p>Set them once and every component follows.</p></div>
+<!-- Hatke UI · Accordion · v0 -->
+<div class="hk-acc">
+  <div class="hk-acc__item">
+    <h3 class="hk-acc__h"><button type="button" id="hk-acc-b1" aria-expanded="true" aria-controls="hk-acc-1">Can I change the colours?<span class="hk-acc__icon" aria-hidden="true"></span></button></h3>
+    <div class="hk-acc__panel" id="hk-acc-1" role="region" aria-labelledby="hk-acc-b1" data-open>
+      <div class="hk-acc__inner"><p>Yes. Every component reads a few CSS variables, such as --hk-accent and --hk-ink.</p><p>Set them once and every component follows.</p></div>
     </div>
   </div>
-  <div class="nd-acc__item">
-    <h3 class="nd-acc__h"><button type="button" id="nd-acc-b2" aria-expanded="false" aria-controls="nd-acc-2">What happens with reduced motion?<span class="nd-acc__icon" aria-hidden="true"></span></button></h3>
-    <div class="nd-acc__panel" id="nd-acc-2" role="region" aria-labelledby="nd-acc-b2">
-      <div class="nd-acc__inner"><p>The state still changes and the colours still change.</p><p>Travel, overshoot and shake are switched off.</p></div>
+  <div class="hk-acc__item">
+    <h3 class="hk-acc__h"><button type="button" id="hk-acc-b2" aria-expanded="false" aria-controls="hk-acc-2">What happens with reduced motion?<span class="hk-acc__icon" aria-hidden="true"></span></button></h3>
+    <div class="hk-acc__panel" id="hk-acc-2" role="region" aria-labelledby="hk-acc-b2">
+      <div class="hk-acc__inner"><p>The state still changes and the colours still change.</p><p>Travel, overshoot and shake are switched off.</p></div>
     </div>
   </div>
-  <div class="nd-acc__item">
-    <h3 class="nd-acc__h"><button type="button" id="nd-acc-b3" aria-expanded="false" aria-controls="nd-acc-3">Do I need a framework?<span class="nd-acc__icon" aria-hidden="true"></span></button></h3>
-    <div class="nd-acc__panel" id="nd-acc-3" role="region" aria-labelledby="nd-acc-b3">
-      <div class="nd-acc__inner"><p>No. Each one is HTML, CSS and a few lines of plain JavaScript.</p></div>
+  <div class="hk-acc__item">
+    <h3 class="hk-acc__h"><button type="button" id="hk-acc-b3" aria-expanded="false" aria-controls="hk-acc-3">Do I need a framework?<span class="hk-acc__icon" aria-hidden="true"></span></button></h3>
+    <div class="hk-acc__panel" id="hk-acc-3" role="region" aria-labelledby="hk-acc-b3">
+      <div class="hk-acc__inner"><p>No. Each one is HTML, CSS and a few lines of plain JavaScript.</p></div>
     </div>
   </div>
 </div>
 
 <style>
-.nd-acc { --a: var(--nd-accent, #2f54eb); width: 360px; max-width: 100%; border-top: 1px solid var(--nd-line, #d6dae0); text-align: left; }
-.nd-acc__item { border-bottom: 1px solid var(--nd-line, #d6dae0); }
-.nd-acc__h { margin: 0; font: inherit; }
-.nd-acc__h button {
+.hk-acc { --a: var(--hk-accent, #2f54eb); width: 360px; max-width: 100%; border-top: 1px solid var(--hk-line, #d6dae0); text-align: left; }
+.hk-acc__item { border-bottom: 1px solid var(--hk-line, #d6dae0); }
+.hk-acc__h { margin: 0; font: inherit; }
+.hk-acc__h button {
   display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 16px; min-height: 50px;
-  padding: 0 2px; border: 0; background: none; color: var(--nd-ink, #121418); font: inherit; font-weight: 600;
+  padding: 0 2px; border: 0; background: none; color: var(--hk-ink, #121418); font: inherit; font-weight: 600;
   text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
-.nd-acc__h button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; border-radius: 6px; }
-.nd-acc__icon { position: relative; flex: none; width: 14px; height: 14px; }
-.nd-acc__icon::before, .nd-acc__icon::after {
+.hk-acc__h button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; border-radius: 6px; }
+.hk-acc__icon { position: relative; flex: none; width: 14px; height: 14px; }
+.hk-acc__icon::before, .hk-acc__icon::after {
   content: ""; position: absolute; left: 0; top: 6px; width: 14px; height: 2px; border-radius: 2px; background: currentColor;
   transition: transform .36s cubic-bezier(.34,1.56,.64,1);
 }
-.nd-acc__icon::after { transform: rotate(90deg); }
-[aria-expanded="true"] > .nd-acc__icon::before, [aria-expanded="true"] > .nd-acc__icon::after { transform: rotate(180deg); }
-.nd-acc__panel {
+.hk-acc__icon::after { transform: rotate(90deg); }
+[aria-expanded="true"] > .hk-acc__icon::before, [aria-expanded="true"] > .hk-acc__icon::after { transform: rotate(180deg); }
+.hk-acc__panel {
   display: grid; grid-template-rows: 0fr; visibility: hidden;
   transition: grid-template-rows .34s cubic-bezier(.2,.8,.2,1), visibility 0s .34s;
 }
-.nd-acc__panel[data-open] { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .34s cubic-bezier(.2,.8,.2,1), visibility 0s; }
-.nd-acc__inner { overflow: hidden; min-height: 0; }
-.nd-acc__inner > * { margin: 0 0 10px; color: var(--nd-sub, #5a606c); opacity: 0; transform: translateY(-6px); transition: opacity .2s, transform .3s cubic-bezier(.2,.8,.2,1); }
-.nd-acc__inner > :last-child { margin-bottom: 16px; }
-.nd-acc__panel[data-open] .nd-acc__inner > * { opacity: 1; transform: none; transition-delay: calc(var(--n, 0) * 45ms + 60ms); }
-@media (prefers-reduced-motion: reduce) { .nd-acc *, .nd-acc *::before, .nd-acc *::after { transition-duration: 0s !important; transition-delay: 0s !important; } }
+.hk-acc__panel[data-open] { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .34s cubic-bezier(.2,.8,.2,1), visibility 0s; }
+.hk-acc__inner { overflow: hidden; min-height: 0; }
+.hk-acc__inner > * { margin: 0 0 10px; color: var(--hk-sub, #5a606c); opacity: 0; transform: translateY(-6px); transition: opacity .2s, transform .3s cubic-bezier(.2,.8,.2,1); }
+.hk-acc__inner > :last-child { margin-bottom: 16px; }
+.hk-acc__panel[data-open] .hk-acc__inner > * { opacity: 1; transform: none; transition-delay: calc(var(--n, 0) * 45ms + 60ms); }
+@media (prefers-reduced-motion: reduce) { .hk-acc *, .hk-acc *::before, .hk-acc *::after { transition-duration: 0s !important; transition-delay: 0s !important; } }
 </style>
 
 <script>
 (function(){
-    document.querySelectorAll('.nd-acc:not([data-nd])').forEach(function (a) {
-      a.setAttribute('data-nd', '');
-      a.querySelectorAll('.nd-acc__h button').forEach(function (b) {
+    document.querySelectorAll('.hk-acc:not([data-hk])').forEach(function (a) {
+      a.setAttribute('data-hk', '');
+      a.querySelectorAll('.hk-acc__h button').forEach(function (b) {
         var p = document.getElementById(b.getAttribute('aria-controls'));
-        p.querySelectorAll('.nd-acc__inner > *').forEach(function (c, n) { c.style.setProperty('--n', n); });
+        p.querySelectorAll('.hk-acc__inner > *').forEach(function (c, n) { c.style.setProperty('--n', n); });
         b.addEventListener('click', function () {
           var open = b.getAttribute('aria-expanded') !== 'true';
           b.setAttribute('aria-expanded', String(open));
