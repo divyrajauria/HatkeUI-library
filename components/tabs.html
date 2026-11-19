@@ -1,0 +1,75 @@
+<!-- Nudge · Tabs · v0 -->
+<div class="nd-tabs">
+  <div class="nd-tabs__list" role="tablist" aria-label="Project">
+    <button type="button" role="tab" id="nd-tab-1" aria-controls="nd-panel-1" aria-selected="true">Overview</button>
+    <button type="button" role="tab" id="nd-tab-2" aria-controls="nd-panel-2" aria-selected="false" tabindex="-1">Activity</button>
+    <button type="button" role="tab" id="nd-tab-3" aria-controls="nd-panel-3" aria-selected="false" tabindex="-1">Settings</button>
+    <span class="nd-tabs__ink" aria-hidden="true"></span>
+  </div>
+  <div class="nd-tabs__panel" role="tabpanel" id="nd-panel-1" aria-labelledby="nd-tab-1" tabindex="0">Three screens shipped this week. Two are waiting on review.</div>
+  <div class="nd-tabs__panel" role="tabpanel" id="nd-panel-2" aria-labelledby="nd-tab-2" tabindex="0" hidden>Maya left a comment on Checkout twelve minutes ago.</div>
+  <div class="nd-tabs__panel" role="tabpanel" id="nd-panel-3" aria-labelledby="nd-tab-3" tabindex="0" hidden>Notifications are on for mentions only.</div>
+</div>
+
+<style>
+.nd-tabs { --a: var(--nd-accent, #2f54eb); width: 340px; max-width: 100%; }
+.nd-tabs__list { position: relative; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; box-shadow: inset 0 -1px var(--nd-line, #d6dae0); }
+.nd-tabs__list::-webkit-scrollbar { display: none; }
+.nd-tabs__list [role="tab"] {
+  flex: none; min-height: 44px; padding: 0 12px; border: 0; border-radius: 8px 8px 0 0; background: none;
+  color: var(--nd-sub, #5a606c); font: inherit; font-weight: 500; cursor: pointer;
+  transition: color .2s; -webkit-tap-highlight-color: transparent;
+}
+.nd-tabs__list [role="tab"]:hover, .nd-tabs__list [aria-selected="true"] { color: var(--nd-ink, #121418); }
+.nd-tabs__list [role="tab"]:focus-visible { outline: 2px solid var(--a); outline-offset: -2px; }
+.nd-tabs__ink { position: absolute; bottom: 0; left: 0; right: 100%; height: 2px; border-radius: 2px; background: var(--a); }
+.nd-tabs__panel { padding: 16px 2px 0; line-height: 1.55; animation: nd-tab-in .32s cubic-bezier(.2,.8,.2,1); }
+.nd-tabs__panel:focus-visible { outline: 2px solid var(--a); outline-offset: 4px; border-radius: 4px; }
+@keyframes nd-tab-in { from { opacity: 0; transform: translateX(var(--nd-dx, 0)); } }
+@media (prefers-reduced-motion: reduce) { .nd-tabs__panel { animation: none; } .nd-tabs__ink { transition: none !important; } }
+</style>
+
+<script>
+(function(){
+    document.querySelectorAll('.nd-tabs:not([data-nd])').forEach(function (root) {
+      root.setAttribute('data-nd', '');
+      var list = root.querySelector('[role="tablist"]'), ink = root.querySelector('.nd-tabs__ink');
+      var tabs = [].slice.call(list.querySelectorAll('[role="tab"]'));
+      var cur = Math.max(0, tabs.findIndex(function (t) { return t.getAttribute('aria-selected') === 'true'; }));
+      var e = 'cubic-bezier(.2,.8,.2,1)';
+      function place(dir) {
+        var t = tabs[cur], l = t.offsetLeft, r = list.scrollWidth - l - t.offsetWidth;
+        // the edge you are moving toward leaves first; the other follows 90ms later
+        ink.style.transition = !dir ? 'none'
+          : dir > 0 ? 'right .24s ' + e + ', left .24s ' + e + ' .09s'
+          : 'left .24s ' + e + ', right .24s ' + e + ' .09s';
+        ink.style.left = l + 'px';
+        ink.style.right = r + 'px';
+      }
+      function select(i, focus) {
+        if (i === cur) return;
+        var dir = i > cur ? 1 : -1;
+        tabs.forEach(function (t, j) {
+          var on = j === i, p = document.getElementById(t.getAttribute('aria-controls'));
+          t.setAttribute('aria-selected', String(on));
+          t.tabIndex = on ? 0 : -1;
+          if (p) { p.hidden = !on; if (on) p.style.setProperty('--nd-dx', dir * 10 + 'px'); }
+        });
+        cur = i;
+        if (focus) tabs[i].focus();
+        place(dir);
+      }
+      tabs.forEach(function (t, i) { t.addEventListener('click', function () { select(i); }); });
+      list.addEventListener('keydown', function (ev) {
+        var n = tabs.length, k = ev.key;
+        var i = k === 'ArrowRight' ? (cur + 1) % n : k === 'ArrowLeft' ? (cur - 1 + n) % n : k === 'Home' ? 0 : k === 'End' ? n - 1 : -1;
+        if (i < 0) return;
+        ev.preventDefault();
+        select(i, true);
+      });
+      place(0);
+      addEventListener('resize', function () { place(0); });
+      if (document.fonts) document.fonts.ready.then(function () { place(0); });
+    });
+  })();
+</script>
