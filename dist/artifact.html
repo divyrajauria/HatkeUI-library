@@ -1,0 +1,990 @@
+<title>Nudge</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Ten everyday UI components with considered micro-interactions. Copy one, paste it, it works.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a specimen catalogue. Short intro, a sticky index, then a two-up grid of live components. */
+:root{
+  --bg:#ECEEF1; --surface:#FFFFFF; --ink:#121418; --sub:#5A606C; --line:#D5D9DF; --accent:#2F54EB;
+  --display:"Bricolage Grotesque", "Inter", system-ui, sans-serif;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --nd-accent:#2F54EB; --nd-ink:#121418; --nd-paper:#FFFFFF; --nd-line:#C9CED6; --nd-muted:#DDE1E7;
+  --nd-sub:#5A606C; --nd-danger:#D92D20; --nd-knob:#FFFFFF; --nd-on-accent:#FFFFFF;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0D0F12; --surface:#15181D; --ink:#ECEEF2; --sub:#9EA5B1; --line:#2A2F37; --accent:#7B93FF;
+  --nd-accent:#7B93FF; --nd-ink:#ECEEF2; --nd-paper:#15181D; --nd-line:#3A404A; --nd-muted:#2C313A;
+  --nd-sub:#9EA5B1; --nd-danger:#FF7366; --nd-knob:#F4F5F7; --nd-on-accent:#0B0D10; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0D0F12; --surface:#15181D; --ink:#ECEEF2; --sub:#9EA5B1; --line:#2A2F37; --accent:#7B93FF;
+  --nd-accent:#7B93FF; --nd-ink:#ECEEF2; --nd-paper:#15181D; --nd-line:#3A404A; --nd-muted:#2C313A;
+  --nd-sub:#9EA5B1; --nd-danger:#FF7366; --nd-knob:#F4F5F7; --nd-on-accent:#0B0D10; color-scheme:dark }
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:72px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:40px 80px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:48px}
+h1,h2{font-family:var(--display);font-weight:700;letter-spacing:-.03em;text-wrap:balance;margin:0}
+p{margin:0;text-wrap:pretty}
+code{font-family:var(--mono);font-size:.88em}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub)}
+.skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:16px;z-index:20;background:var(--surface);padding:8px 12px;border-radius:8px}
+
+.top{display:grid;gap:18px}
+.top h1{font-size:clamp(56px,11vw,128px);line-height:.9;letter-spacing:-.05em}
+.top h1 span{display:inline-block;transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.top h1:hover span:nth-child(odd){transform:translateY(-6px)}
+.lede{font-size:clamp(18px,2.2vw,22px);max-width:36ch;line-height:1.4}
+
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.how>div{background:var(--surface);padding:20px;display:grid;gap:8px;align-content:start;min-width:0}
+.how b{font-family:var(--display);font-size:17px;letter-spacing:-.01em}
+.how p{color:var(--sub);font-size:14px}
+.how pre{margin:0;font:12px/1.6 var(--mono);color:var(--ink);overflow-x:auto}
+
+.index{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:8px;margin:0 -8px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px)}
+.index::-webkit-scrollbar{display:none}
+.index a{flex:none;display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:999px;color:var(--sub);text-decoration:none;font-size:13px;font-weight:500;transition:background-color .18s,color .18s}
+.index a:hover{background:var(--surface);color:var(--ink)}
+.index a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;display:grid;grid-template-rows:auto minmax(240px,auto) auto;align-content:start;min-width:0;overflow:hidden}
+.card-h{display:flex;align-items:baseline;gap:12px;padding:18px 20px 14px}
+.card-h .no{font-family:var(--mono);font-size:12px;color:var(--sub)}
+.card-h h2{font-size:22px}
+.stage{position:relative;display:grid;place-items:center;padding:24px 20px;border-block:1px solid var(--line);
+  background-color:var(--bg);background-image:radial-gradient(color-mix(in srgb,var(--sub) 28%,transparent) 1px,transparent 1.2px);background-size:16px 16px;overflow:hidden;min-width:0}
+.stage-inner{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;gap:14px;width:100%;min-width:0}
+.stage .nd-toasts{position:absolute;right:16px;bottom:16px;width:min(320px,calc(100% - 32px))}
+#toasts .stage{min-height:300px}
+.card-b{padding:18px 20px 20px;display:grid;gap:14px;min-width:0}
+.idea b{font-weight:600}
+.specs{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--sub);letter-spacing:.04em}
+.specs svg{width:30px;height:22px;overflow:visible}
+.states{display:flex;flex-wrap:wrap;gap:6px}
+.states span{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:999px;background:var(--bg);color:var(--sub)}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:500;cursor:pointer;transition:transform .3s cubic-bezier(.34,1.56,.64,1),border-color .18s}
+.btn:hover{border-color:var(--ink)}
+.btn:active{transform:scale(.96);transition-duration:.12s}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn .ck{stroke-dasharray:21;stroke-dashoffset:21;transition:stroke-dashoffset .3s cubic-bezier(.2,.8,.2,1) .05s}
+.btn .cp{transition:opacity .15s}
+.btn.copied .ck{stroke-dashoffset:0}.btn.copied .cp{opacity:0}
+.ico{display:grid}.ico>*{grid-area:1/1}
+pre.code{margin:0;max-height:340px;overflow:auto;padding:16px;border-radius:12px;background:var(--bg);border:1px solid var(--line);font:12px/1.55 var(--mono);white-space:pre;tab-size:2}
+.demo-opt{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--sub);min-height:32px;cursor:pointer}
+.demo-opt input{width:16px;height:16px;accent-color:var(--accent)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:11px;color:var(--sub);letter-spacing:.06em;border-top:1px solid var(--line);padding-top:20px}
+
+@media (max-width:900px){ .grid{grid-template-columns:1fr} .how{grid-template-columns:1fr} }
+@media (max-width:600px){ .stage{padding:20px 12px} }
+@media (prefers-reduced-motion:reduce){ .top h1 span,.btn{transition:none} html{scroll-behavior:auto} }
+@media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth} }
+
+/* ---- components (generated from components/*.html) ---- */
+
+.nd-switch-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 240px; max-width: 100%; }
+.nd-switch {
+  --a: var(--nd-accent, #2f54eb); --off: var(--nd-muted, #dde1e7); --k: 26px;
+  position: relative; flex: none; width: 52px; height: 32px; padding: 0; border: 0; border-radius: 999px;
+  background: var(--off); cursor: pointer; isolation: isolate; -webkit-tap-highlight-color: transparent;
+}
+.nd-switch::before { content: ""; position: absolute; inset: -6px -4px; } /* 44px hit target */
+.nd-switch::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--a);
+  clip-path: circle(0 at 16px 50%); transition: clip-path .32s cubic-bezier(.2,.8,.2,1);
+}
+.nd-switch[aria-checked="true"]::after { clip-path: circle(46px at 16px 50%); }
+.nd-switch__knob {
+  position: absolute; z-index: 1; top: 3px; left: 3px; width: var(--k); height: 26px; border-radius: 999px;
+  background: var(--nd-knob, #fff); box-shadow: 0 1px 2px rgba(0,0,0,.18), 0 3px 8px rgba(0,0,0,.08);
+  transition: left .36s cubic-bezier(.34,1.56,.64,1), width .18s cubic-bezier(.2,.8,.2,1);
+}
+.nd-switch:active { --k: 33px; } /* stretch on press */
+.nd-switch[aria-checked="true"] .nd-switch__knob { left: calc(100% - var(--k) - 3px); }
+.nd-switch:focus-visible { outline: 2px solid var(--a); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .nd-switch::after, .nd-switch__knob { transition-duration: 0s; } }
+
+
+.nd-checks { border: 0; margin: 0; padding: 0; display: grid; min-width: 200px; }
+.nd-checks legend { padding: 0; margin-bottom: 4px; font-size: .8em; color: var(--nd-sub, #5a606c); }
+.nd-check {
+  --a: var(--nd-accent, #2f54eb); --line: var(--nd-line, #c9ced6);
+  position: relative; display: flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer;
+  user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.nd-check input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.nd-check__box {
+  flex: none; display: grid; place-items: center; width: 22px; height: 22px;
+  border: 1.5px solid var(--line); border-radius: 7px;
+  transition: background-color .2s cubic-bezier(.2,.8,.2,1), border-color .2s, transform .32s cubic-bezier(.34,1.56,.64,1);
+}
+.nd-check:active .nd-check__box { transform: scale(.86); transition-duration: .2s, .2s, .12s; }
+.nd-check input:checked + .nd-check__box { background: var(--a); border-color: var(--a); }
+.nd-check svg {
+  width: 16px; height: 16px; fill: none; stroke: var(--nd-on-accent, #fff); stroke-width: 2.6;
+  stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 21; stroke-dashoffset: 21;
+  transition: stroke-dashoffset .12s;
+}
+.nd-check input:checked + .nd-check__box svg { stroke-dashoffset: 0; transition: stroke-dashoffset .3s cubic-bezier(.2,.8,.2,1) .08s; }
+.nd-check input:focus-visible + .nd-check__box { outline: 2px solid var(--a); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .nd-check__box, .nd-check svg { transition: none !important; } }
+
+
+.nd-btn-wrap { display: grid; justify-items: center; gap: 8px; }
+.nd-btn {
+  --a: var(--nd-accent, #2f54eb); --bad: var(--nd-danger, #d92d20);
+  position: relative; display: inline-grid; place-items: center; box-sizing: border-box;
+  height: 44px; min-width: 44px; padding: 0 22px; border: 0; border-radius: 999px;
+  background: var(--nd-ink, #121418); color: var(--nd-paper, #fff); font: inherit; font-weight: 600;
+  white-space: nowrap; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: width .34s cubic-bezier(.2,.8,.2,1), background-color .2s, transform .32s cubic-bezier(.34,1.56,.64,1);
+}
+.nd-btn > * { grid-area: 1 / 1; }
+.nd-btn:active { transform: scale(.96); transition-duration: .34s, .2s, .12s; }
+.nd-btn:focus-visible { outline: 2px solid var(--a); outline-offset: 3px; }
+.nd-btn:not([data-state="idle"]) { padding: 0; cursor: default; }
+.nd-btn__label { transition: opacity .14s, transform .2s cubic-bezier(.2,.8,.2,1); }
+.nd-btn:not([data-state="idle"]) .nd-btn__label { opacity: 0; transform: scale(.92); }
+.nd-btn__dots { display: flex; gap: 4px; opacity: 0; transition: opacity .14s; }
+.nd-btn__dots i { width: 5px; height: 5px; border-radius: 50%; background: currentColor; animation: nd-btn-dot .9s ease-in-out infinite paused; }
+.nd-btn__dots i:nth-child(2) { animation-delay: .12s; }
+.nd-btn__dots i:nth-child(3) { animation-delay: .24s; }
+.nd-btn[data-state="loading"] .nd-btn__dots { opacity: 1; transition-delay: .2s; }
+.nd-btn[data-state="loading"] .nd-btn__dots i { animation-play-state: running; }
+.nd-btn__icon { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.nd-btn__ok { stroke-dasharray: 21; stroke-dashoffset: 21; transition: stroke-dashoffset .12s; }
+.nd-btn__err path { stroke-dasharray: 15; stroke-dashoffset: 15; transition: stroke-dashoffset .12s; }
+.nd-btn[data-state="done"], .nd-btn[data-state="error"] { color: var(--nd-on-accent, #fff); }
+.nd-btn[data-state="done"] { background: var(--a); }
+.nd-btn[data-state="done"] .nd-btn__ok,
+.nd-btn[data-state="error"] .nd-btn__err path { stroke-dashoffset: 0; transition: stroke-dashoffset .3s cubic-bezier(.2,.8,.2,1) .1s; }
+.nd-btn[data-state="error"] { background: var(--bad); animation: nd-shake .42s cubic-bezier(.36,.07,.19,.97); }
+.nd-btn__status { margin: 0; min-height: 1.4em; font-size: .875em; color: var(--nd-sub, #5a606c); }
+.nd-btn__status.is-bad { color: var(--nd-danger, #d92d20); }
+@keyframes nd-btn-dot { 0%, 100% { transform: translateY(0); opacity: .5; } 40% { transform: translateY(-4px); opacity: 1; } }
+@keyframes nd-shake { 20% { transform: translateX(-5px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-2.5px); } 80% { transform: translateX(1px); } }
+@media (prefers-reduced-motion: reduce) {
+  .nd-btn, .nd-btn * { transition-duration: 0s !important; transition-delay: 0s !important; }
+  .nd-btn, .nd-btn__dots i { animation: none !important; }
+}
+
+
+.nd-tabs { --a: var(--nd-accent, #2f54eb); width: 340px; max-width: 100%; }
+.nd-tabs__list { position: relative; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; box-shadow: inset 0 -1px var(--nd-line, #d6dae0); }
+.nd-tabs__list::-webkit-scrollbar { display: none; }
+.nd-tabs__list [role="tab"] {
+  flex: none; min-height: 44px; padding: 0 12px; border: 0; border-radius: 8px 8px 0 0; background: none;
+  color: var(--nd-sub, #5a606c); font: inherit; font-weight: 500; cursor: pointer;
+  transition: color .2s; -webkit-tap-highlight-color: transparent;
+}
+.nd-tabs__list [role="tab"]:hover, .nd-tabs__list [aria-selected="true"] { color: var(--nd-ink, #121418); }
+.nd-tabs__list [role="tab"]:focus-visible { outline: 2px solid var(--a); outline-offset: -2px; }
+.nd-tabs__ink { position: absolute; bottom: 0; left: 0; right: 100%; height: 2px; border-radius: 2px; background: var(--a); }
+.nd-tabs__panel { padding: 16px 2px 0; line-height: 1.55; animation: nd-tab-in .32s cubic-bezier(.2,.8,.2,1); }
+.nd-tabs__panel:focus-visible { outline: 2px solid var(--a); outline-offset: 4px; border-radius: 4px; }
+@keyframes nd-tab-in { from { opacity: 0; transform: translateX(var(--nd-dx, 0)); } }
+@media (prefers-reduced-motion: reduce) { .nd-tabs__panel { animation: none; } .nd-tabs__ink { transition: none !important; } }
+
+
+.nd-tip {
+  --a: var(--nd-accent, #2f54eb);
+  position: relative; display: inline-flex; gap: 4px; padding: 4px;
+  border: 1px solid var(--nd-line, #d6dae0); border-radius: 14px; background: var(--nd-paper, #fff);
+}
+.nd-tip > button {
+  width: 44px; height: 44px; border: 0; border-radius: 10px; background: none; color: var(--nd-ink, #121418);
+  font: inherit; font-size: 16px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background-color .18s, color .18s, transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.nd-tip > button:hover { background: var(--nd-muted, #eceef2); }
+.nd-tip > button[aria-pressed="true"] { background: var(--nd-muted, #eceef2); color: var(--a); }
+.nd-tip > button:active { transform: scale(.9); transition-duration: .18s, .18s, .12s; }
+.nd-tip > button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }
+.nd-tip__bubble {
+  position: absolute; bottom: calc(100% + 10px); left: 0; display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: 9px; background: var(--nd-ink, #121418); color: var(--nd-paper, #fff);
+  font-size: 13px; line-height: 1.3; white-space: nowrap; pointer-events: none; opacity: 0;
+  transform: translateX(-50%) translateY(4px) scale(.94); transform-origin: 50% 100%;
+  transition: opacity .16s, transform .2s cubic-bezier(.2,.8,.2,1), left .2s cubic-bezier(.2,.8,.2,1);
+}
+.nd-tip__bubble::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border: 5px solid transparent; border-top-color: var(--nd-ink, #121418); }
+.nd-tip__bubble.is-on { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
+.nd-tip__bubble.no-glide { transition: none; }
+.nd-tip__bubble kbd { font: inherit; font-size: 12px; opacity: .6; }
+@media (prefers-reduced-motion: reduce) {
+  .nd-tip__bubble, .nd-tip__bubble.is-on { transform: translateX(-50%); transition: opacity .16s; }
+  .nd-tip > button { transition: none; }
+}
+
+
+.nd-toast-trigger {
+  min-height: 44px; padding: 0 18px; border: 1px solid var(--nd-line, #d6dae0); border-radius: 999px;
+  background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); font: inherit; font-weight: 500; cursor: pointer;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1), border-color .18s;
+}
+.nd-toast-trigger:hover { border-color: var(--nd-ink, #121418); }
+.nd-toast-trigger:active { transform: scale(.96); transition-duration: .12s; }
+.nd-toast-trigger:focus-visible { outline: 2px solid var(--nd-accent, #2f54eb); outline-offset: 2px; }
+.nd-toasts {
+  --a: var(--nd-accent, #2f54eb);
+  position: fixed; right: 16px; bottom: 16px; z-index: 50; width: min(340px, calc(100vw - 32px));
+  margin: 0; padding: 0; list-style: none;
+}
+.nd-toast {
+  --i: 0;
+  position: absolute; right: 0; bottom: 0; left: 0; display: flex; align-items: center; gap: 10px;
+  min-height: 56px; padding: 6px 6px 6px 14px; border: 1px solid var(--nd-line, #d6dae0); border-radius: 14px;
+  background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); box-shadow: 0 6px 24px rgba(15,20,30,.12);
+  font-size: 14px; touch-action: pan-y; transform-origin: 50% 100%;
+  transform: translateY(calc(var(--i) * -10px)) scale(calc(1 - var(--i) * .05));
+  transition: transform .34s cubic-bezier(.2,.8,.2,1), opacity .3s, translate .3s cubic-bezier(.2,.8,.2,1);
+  animation: nd-toast-in .34s cubic-bezier(.2,.8,.2,1);
+}
+.nd-toast::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 10px; } /* bridges the gap while fanned out */
+.nd-toasts:hover .nd-toast, .nd-toasts:focus-within .nd-toast { transform: translateY(calc(var(--i) * (-100% - 8px))); }
+.nd-toast.is-hidden { opacity: 0; pointer-events: none; }
+.nd-toast.is-out { opacity: 0; translate: calc(var(--sx, 1) * 110%) 0; pointer-events: none; }
+.nd-toast__dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--a); }
+.nd-toast__text { flex: 1; min-width: 0; }
+.nd-toast__close {
+  flex: none; width: 44px; height: 44px; border: 0; border-radius: 10px; background: none;
+  color: var(--nd-sub, #5a606c); font: inherit; font-size: 20px; line-height: 1; cursor: pointer;
+}
+.nd-toast__close:hover { background: var(--nd-muted, #eceef2); color: var(--nd-ink, #121418); }
+.nd-toast__close:focus-visible { outline: 2px solid var(--a); outline-offset: -2px; }
+.nd-toast__bar {
+  position: absolute; left: 14px; right: 14px; bottom: 5px; height: 2px; border-radius: 2px;
+  background: var(--a); opacity: .45; transform-origin: left; animation: nd-toast-timer 4.5s linear forwards;
+}
+.nd-toasts:hover .nd-toast__bar, .nd-toasts:focus-within .nd-toast__bar { animation-play-state: paused; }
+@keyframes nd-toast-in { from { transform: translateY(120%); opacity: 0; } }
+@keyframes nd-toast-timer { to { transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .nd-toast { animation: none; transition: opacity .2s; }
+  .nd-toast.is-out { translate: 0 0; }
+}
+
+
+.nd-range { --a: var(--nd-accent, #2f54eb); --off: var(--nd-muted, #dde1e7); --f: .4; --tilt: 0deg; width: 280px; max-width: 100%; }
+.nd-range__head { display: flex; justify-content: space-between; font-size: 14px; color: var(--nd-sub, #5a606c); }
+.nd-range__val { color: var(--nd-ink, #121418); font-variant-numeric: tabular-nums; }
+.nd-range__track { position: relative; }
+.nd-range input { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 44px; margin: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.nd-range input:focus { outline: none; }
+.nd-range input::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: linear-gradient(to right, var(--a) calc(11px + var(--f) * (100% - 22px)), var(--off) 0); }
+.nd-range input::-moz-range-track { height: 6px; border-radius: 999px; background: var(--off); }
+.nd-range input::-moz-range-progress { height: 6px; border-radius: 999px; background: var(--a); }
+.nd-range input::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 22px; height: 22px; margin-top: -8px; border: 0; border-radius: 50%;
+  background: var(--nd-knob, #fff); box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.22);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.nd-range input::-moz-range-thumb {
+  width: 22px; height: 22px; border: 0; border-radius: 50%;
+  background: var(--nd-knob, #fff); box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.22);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.nd-range input:active::-webkit-slider-thumb { transform: scale(1.25); }
+.nd-range input:active::-moz-range-thumb { transform: scale(1.25); }
+.nd-range input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--nd-paper, #fff), 0 0 0 5px var(--a); }
+.nd-range input:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--nd-paper, #fff), 0 0 0 5px var(--a); }
+.nd-range__bubble {
+  position: absolute; bottom: calc(100% - 6px); left: calc(11px + var(--f) * (100% - 22px));
+  min-width: 36px; padding: 4px 8px; border-radius: 8px; box-sizing: border-box;
+  background: var(--nd-ink, #121418); color: var(--nd-paper, #fff); font-size: 13px; text-align: center;
+  font-variant-numeric: tabular-nums; pointer-events: none; opacity: 0;
+  transform-origin: 50% calc(100% + 16px); transform: translateX(-50%) rotate(var(--tilt)) scale(.6);
+  transition: opacity .16s, transform .12s cubic-bezier(.2,.8,.2,1);
+}
+.nd-range.is-active .nd-range__bubble, .nd-range input:focus-visible + .nd-range__bubble { opacity: 1; transform: translateX(-50%) rotate(var(--tilt)); }
+@media (prefers-reduced-motion: reduce) {
+  .nd-range input::-webkit-slider-thumb { transition: none; }
+  .nd-range input::-moz-range-thumb { transition: none; }
+  .nd-range__bubble { transition: opacity .16s; }
+}
+
+
+.nd-field { --a: var(--nd-accent, #2f54eb); --bad: var(--nd-danger, #d92d20); width: 300px; max-width: 100%; }
+.nd-field__box { position: relative; }
+.nd-field input {
+  display: block; width: 100%; box-sizing: border-box; height: 56px; padding: 22px 14px 6px;
+  border: 1.5px solid var(--nd-line, #c9ced6); border-radius: 12px; outline: 0;
+  background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); font: inherit; font-size: 16px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.nd-field input:focus { border-color: var(--a); box-shadow: 0 0 0 4px color-mix(in srgb, var(--a) 20%, transparent); }
+.nd-field label {
+  position: absolute; left: 15px; top: 18px; color: var(--nd-sub, #5a606c); font-size: 16px; line-height: 20px;
+  pointer-events: none; transform-origin: 0 0; transition: transform .2s cubic-bezier(.2,.8,.2,1), color .2s;
+}
+.nd-field input:focus + label, .nd-field input:not(:placeholder-shown) + label { transform: translateY(-10px) scale(.75); }
+.nd-field input:focus + label { color: var(--a); }
+.nd-field__foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 6px; font-size: 13px; color: var(--nd-sub, #5a606c); }
+.nd-field__msg { transition: color .2s; }
+.nd-field__count { font-variant-numeric: tabular-nums; transition: color .2s; }
+.nd-field.is-near .nd-field__count { color: var(--nd-ink, #121418); font-weight: 600; }
+.nd-field.is-bad input, .nd-field.is-bad input:focus { border-color: var(--bad); box-shadow: 0 0 0 4px color-mix(in srgb, var(--bad) 18%, transparent); }
+.nd-field.is-bad label { color: var(--bad); }
+.nd-field.is-bad .nd-field__msg { color: var(--bad); }
+.nd-field.is-shake .nd-field__box { animation: nd-shake .4s cubic-bezier(.36,.07,.19,.97); }
+@keyframes nd-shake { 20% { transform: translateX(-5px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-2.5px); } 80% { transform: translateX(1px); } }
+@media (prefers-reduced-motion: reduce) { .nd-field.is-shake .nd-field__box { animation: none; } .nd-field label { transition: color .2s; } }
+
+
+.nd-acc { --a: var(--nd-accent, #2f54eb); width: 360px; max-width: 100%; border-top: 1px solid var(--nd-line, #d6dae0); text-align: left; }
+.nd-acc__item { border-bottom: 1px solid var(--nd-line, #d6dae0); }
+.nd-acc__h { margin: 0; font: inherit; }
+.nd-acc__h button {
+  display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 16px; min-height: 50px;
+  padding: 0 2px; border: 0; background: none; color: var(--nd-ink, #121418); font: inherit; font-weight: 600;
+  text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.nd-acc__h button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; border-radius: 6px; }
+.nd-acc__icon { position: relative; flex: none; width: 14px; height: 14px; }
+.nd-acc__icon::before, .nd-acc__icon::after {
+  content: ""; position: absolute; left: 0; top: 6px; width: 14px; height: 2px; border-radius: 2px; background: currentColor;
+  transition: transform .36s cubic-bezier(.34,1.56,.64,1);
+}
+.nd-acc__icon::after { transform: rotate(90deg); }
+[aria-expanded="true"] > .nd-acc__icon::before, [aria-expanded="true"] > .nd-acc__icon::after { transform: rotate(180deg); }
+.nd-acc__panel {
+  display: grid; grid-template-rows: 0fr; visibility: hidden;
+  transition: grid-template-rows .34s cubic-bezier(.2,.8,.2,1), visibility 0s .34s;
+}
+.nd-acc__panel[data-open] { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .34s cubic-bezier(.2,.8,.2,1), visibility 0s; }
+.nd-acc__inner { overflow: hidden; min-height: 0; }
+.nd-acc__inner > * { margin: 0 0 10px; color: var(--nd-sub, #5a606c); opacity: 0; transform: translateY(-6px); transition: opacity .2s, transform .3s cubic-bezier(.2,.8,.2,1); }
+.nd-acc__inner > :last-child { margin-bottom: 16px; }
+.nd-acc__panel[data-open] .nd-acc__inner > * { opacity: 1; transform: none; transition-delay: calc(var(--n, 0) * 45ms + 60ms); }
+@media (prefers-reduced-motion: reduce) { .nd-acc *, .nd-acc *::before, .nd-acc *::after { transition-duration: 0s !important; transition-delay: 0s !important; } }
+
+
+.nd-step { --a: var(--nd-accent, #2f54eb); display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 260px; max-width: 100%; }
+.nd-step__ctrl { display: flex; align-items: center; gap: 6px; }
+.nd-step button {
+  display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--nd-line, #d6dae0);
+  border-radius: 999px; background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .2s, border-color .2s;
+}
+.nd-step button:hover { border-color: var(--nd-ink, #121418); }
+.nd-step button:active { transform: scale(.9); transition-duration: .12s, .2s, .2s; }
+.nd-step button[aria-disabled="true"] { opacity: .4; }
+.nd-step button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }
+.nd-step svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.nd-step__val { display: inline-flex; justify-content: center; min-width: 2.4ch; font-size: 22px; font-weight: 600; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.nd-step__d { position: relative; display: inline-block; height: 1.3em; overflow: hidden; }
+.nd-step__d > span { display: block; }
+.nd-step__d .is-in { animation: nd-roll-in .3s cubic-bezier(.2,.8,.2,1) both; }
+.nd-step__d .is-out { position: absolute; inset: 0; animation: nd-roll-out .3s cubic-bezier(.2,.8,.2,1) both; }
+.nd-step__live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@keyframes nd-roll-in { from { transform: translateY(calc(var(--dir) * 100%)); } }
+@keyframes nd-roll-out { to { transform: translateY(calc(var(--dir) * -100%)); } }
+@media (prefers-reduced-motion: reduce) { .nd-step__d .is-in { animation: none; } .nd-step__d .is-out { display: none; } .nd-step button { transition: none; } }
+
+
+</style>
+
+<a class="skip" href="#main">Skip to components</a>
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">v0 · ten components · HTML, CSS and plain JS</span>
+    <h1 aria-label="Nudge"><span>N</span><span>u</span><span>d</span><span>g</span><span>e</span></h1>
+    <p class="lede">Everyday controls with one considered idea about motion each. Copy one, paste it into your page, and it works.</p>
+  </header>
+
+  <section class="how" aria-label="How to use it">
+    <div><b>Copy, paste, done.</b><p>Each component is one block of HTML, CSS and a few lines of JavaScript. No install, no framework, no dependencies.</p></div>
+    <div><b>Make it yours.</b><p>Set these once and every component follows.</p>
+<pre>:root {
+  --nd-accent: #2f54eb;
+  --nd-ink: #121418;
+  --nd-paper: #ffffff;
+  --nd-line: #c9ced6;
+  --nd-muted: #dde1e7;
+}</pre></div>
+    <div><b>Moves on purpose.</b><p>Feedback on press. Motion follows direction. State changes first, animation second. A refusal is a shake. With reduced motion on, the state still changes and the travel is switched off.</p></div>
+  </section>
+
+  <nav class="index" aria-label="Components"><a href="#toggle">Toggle</a><a href="#checkbox">Checkbox</a><a href="#button">Button</a><a href="#tabs">Tabs</a><a href="#tooltip">Tooltip</a><a href="#toasts">Toast stack</a><a href="#slider">Slider</a><a href="#input">Text field</a><a href="#accordion">Accordion</a><a href="#stepper">Stepper</a></nav>
+
+  <main id="main" class="grid">
+<article class="card" id="toggle" aria-labelledby="toggle-h">
+  <div class="card-h"><span class="no">01</span><h2 id="toggle-h">Toggle</h2></div>
+  <div class="stage"><div class="stage-inner"><div class="nd-switch-row">
+  <span id="nd-switch-1">Airplane mode</span>
+  <button class="nd-switch" type="button" role="switch" aria-checked="false" aria-labelledby="nd-switch-1"><span class="nd-switch__knob"></span></button>
+</div>
+<div class="nd-switch-row">
+  <span id="nd-switch-2">Wi-Fi</span>
+  <button class="nd-switch" type="button" role="switch" aria-checked="true" aria-labelledby="nd-switch-2"><span class="nd-switch__knob"></span></button>
+</div></div></div>
+  <div class="card-b">
+    <p class="idea"><b>Ink trail.</b> The knob stretches when you press it, overshoots a little, and leaves the colour behind it as it travels.</p>
+    <div class="specs"><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M0,22 L30,0" stroke="var(--line)" fill="none"/><path d="M0,22 C10.2,-12.3 19.2,0.0 30,0" stroke="var(--accent)" stroke-width="1.6" fill="none"/></svg><span>360ms</span></div>
+    <div class="states"><span>off</span><span>on</span><span>pressed</span><span>focus</span><span>reduced motion</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary copy" data-id="toggle"><span class="ico"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl">Copy code</span></button>
+      <button type="button" class="btn view" aria-expanded="false" aria-controls="toggle-code">View code</button>
+    </div>
+    <pre class="code" id="toggle-code" tabindex="0" hidden></pre>
+  </div>
+</article>
+<article class="card" id="checkbox" aria-labelledby="checkbox-h">
+  <div class="card-h"><span class="no">02</span><h2 id="checkbox-h">Checkbox</h2></div>
+  <div class="stage"><div class="stage-inner"><fieldset class="nd-checks">
+  <legend>Notify me about</legend>
+  <label class="nd-check"><input type="checkbox" checked><span class="nd-check__box" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>New comments</label>
+  <label class="nd-check"><input type="checkbox"><span class="nd-check__box" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Mentions</label>
+  <label class="nd-check"><input type="checkbox"><span class="nd-check__box" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Weekly digest</label>
+</fieldset></div></div>
+  <div class="card-b">
+    <p class="idea"><b>Pen stroke.</b> The box squeezes when pressed and springs back filled. Then the check is drawn in, the way you would write it.</p>
+    <div class="specs"><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M0,22 L30,0" stroke="var(--line)" fill="none"/><path d="M0,22 C6.0,4.4 6.0,0.0 30,0" stroke="var(--accent)" stroke-width="1.6" fill="none"/></svg><span>300ms</span></div>
+    <div class="states"><span>unchecked</span><span>checked</span><span>pressed</span><span>focus</span><span>reduced motion</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary copy" data-id="checkbox"><span class="ico"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl">Copy code</span></button>
+      <button type="button" class="btn view" aria-expanded="false" aria-controls="checkbox-code">View code</button>
+    </div>
+    <pre class="code" id="checkbox-code" tabindex="0" hidden></pre>
+  </div>
+</article>
+<article class="card" id="button" aria-labelledby="button-h">
+  <div class="card-h"><span class="no">03</span><h2 id="button-h">Button</h2></div>
+  <div class="stage"><div class="stage-inner"><div class="nd-btn-wrap">
+  <button class="nd-btn" type="button" data-state="idle">
+    <span class="nd-btn__label">Save changes</span>
+    <span class="nd-btn__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <svg class="nd-btn__icon nd-btn__ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+    <svg class="nd-btn__icon nd-btn__err" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10"/><path d="M17 7L7 17"/></svg>
+  </button>
+  <p class="nd-btn__status" role="status"></p>
+</div><label class="demo-opt"><input type="checkbox" id="fail-next"> Make the next save fail</label></div></div>
+  <div class="card-b">
+    <p class="idea"><b>Fold to a pulse.</b> The button folds into a circle while it works, then opens back up. A check means saved. A shake means it failed.</p>
+    <div class="specs"><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M0,22 L30,0" stroke="var(--line)" fill="none"/><path d="M0,22 C6.0,4.4 6.0,0.0 30,0" stroke="var(--accent)" stroke-width="1.6" fill="none"/></svg><span>340ms</span></div>
+    <div class="states"><span>idle</span><span>pressed</span><span>loading</span><span>success</span><span>error</span><span>focus</span><span>reduced motion</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary copy" data-id="button"><span class="ico"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl">Copy code</span></button>
+      <button type="button" class="btn view" aria-expanded="false" aria-controls="button-code">View code</button>
+    </div>
+    <pre class="code" id="button-code" tabindex="0" hidden></pre>
+  </div>
+</article>
+<article class="card" id="tabs" aria-labelledby="tabs-h">
+  <div class="card-h"><span class="no">04</span><h2 id="tabs-h">Tabs</h2></div>
+  <div class="stage"><div class="stage-inner"><div class="nd-tabs">
+  <div class="nd-tabs__list" role="tablist" aria-label="Project">
+    <button type="button" role="tab" id="nd-tab-1" aria-controls="nd-panel-1" aria-selected="true">Overview</button>
+    <button type="button" role="tab" id="nd-tab-2" aria-controls="nd-panel-2" aria-selected="false" tabindex="-1">Activity</button>
+    <button type="button" role="tab" id="nd-tab-3" aria-controls="nd-panel-3" aria-selected="false" tabindex="-1">Settings</button>
+    <span class="nd-tabs__ink" aria-hidden="true"></span>
+  </div>
+  <div class="nd-tabs__panel" role="tabpanel" id="nd-panel-1" aria-labelledby="nd-tab-1" tabindex="0">Three screens shipped this week. Two are waiting on review.</div>
+  <div class="nd-tabs__panel" role="tabpanel" id="nd-panel-2" aria-labelledby="nd-tab-2" tabindex="0" hidden>Maya left a comment on Checkout twelve minutes ago.</div>
+  <div class="nd-tabs__panel" role="tabpanel" id="nd-panel-3" aria-labelledby="nd-tab-3" tabindex="0" hidden>Notifications are on for mentions only.</div>
+</div></div></div>
+  <div class="card-b">
+    <p class="idea"><b>Inchworm.</b> The underline's leading edge leaves first and the trailing edge follows. The panel slides in from the side you moved toward.</p>
+    <div class="specs"><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M0,22 L30,0" stroke="var(--line)" fill="none"/><path d="M0,22 C6.0,4.4 6.0,0.0 30,0" stroke="var(--accent)" stroke-width="1.6" fill="none"/></svg><span>240 + 90ms</span></div>
+    <div class="states"><span>selected</span><span>hover</span><span>focus</span><span>arrow keys</span><span>reduced motion</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary copy" data-id="tabs"><span class="ico"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl">Copy code</span></button>
+      <button type="button" class="btn view" aria-expanded="false" aria-controls="tabs-code">View code</button>
+    </div>
+    <pre class="code" id="tabs-code" tabindex="0" hidden></pre>
+  </div>
+</article>
+<article class="card" id="tooltip" aria-labelledby="tooltip-h">
+  <div class="card-h"><span class="no">05</span><h2 id="tooltip-h">Tooltip</h2></div>
+  <div class="stage"><div class="stage-inner"><div class="nd-tip" role="group" aria-label="Formatting">
+  <button type="button" aria-label="Bold" aria-pressed="false" data-key="⌘B" aria-keyshortcuts="Meta+B"><b>B</b></button>
+  <button type="button" aria-label="Italic" aria-pressed="false" data-key="⌘I" aria-keyshortcuts="Meta+I"><i>I</i></button>
+  <button type="button" aria-label="Underline" aria-pressed="false" data-key="⌘U" aria-keyshortcuts="Meta+U"><u>U</u></button>
+  <button type="button" aria-label="Strikethrough" aria-pressed="false" data-key="⇧⌘X" aria-keyshortcuts="Shift+Meta+X"><s>S</s></button>
+  <span class="nd-tip__bubble" aria-hidden="true"><span class="nd-tip__text"></span><kbd></kbd></span>
+</div></div></div>
+  <div class="card-b">
+    <p class="idea"><b>One tooltip that travels.</b> The first one waits half a second. After that, the same bubble glides straight to the next button with no wait.</p>
+    <div class="specs"><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M0,22 L30,0" stroke="var(--line)" fill="none"/><path d="M0,22 C6.0,4.4 6.0,0.0 30,0" stroke="var(--accent)" stroke-width="1.6" fill="none"/></svg><span>500 delay, then 200</span></div>
+    <div class="states"><span>cold</span><span>warm</span><span>keyboard focus</span><span>Escape</span><span>hoverable</span><span>reduced motion</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary copy" data-id="tooltip"><span class="ico"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl">Copy code</span></button>
+      <button type="button" class="btn view" aria-expanded="false" aria-controls="tooltip-code">View code</button>
+    </div>
+    <pre class="code" id="tooltip-code" tabindex="0" hidden></pre>
+  </div>
+</article>
+<article class="card" id="toasts" aria-labelledby="toasts-h">
+  <div class="card-h"><span class="no">06</span><h2 id="toasts-h">Toast stack</h2></div>
+  <div class="stage"><div class="stage-inner"><button class="nd-toast-trigger" type="button" data-toast="Invite sent to sam@studio.co|Link copied|Changes saved|3 files uploaded">Show a toast</button>
+<ol class="nd-toasts" aria-live="polite" aria-label="Notifications"></ol></div></div>
+  <div class="card-b">
+    <p class="idea"><b>A deck you can read.</b> New toasts land on top of the stack. Hover or focus fans them out and pauses every timer. Each toast shows its time running out, and you can swipe one away.</p>
+    <div class="specs"><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M0,22 L30,0" stroke="var(--line)" fill="none"/><path d="M0,22 C6.0,4.4 6.0,0.0 30,0" stroke="var(--accent)" stroke-width="1.6" fill="none"/></svg><span>340ms</span></div>
+    <div class="states"><span>empty</span><span>one</span><span>stacked</span><span>expanded</span><span>paused</span><span>swipe</span><span>reduced motion</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary copy" data-id="toasts"><span class="ico"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl">Copy code</span></button>
+      <button type="button" class="btn view" aria-expanded="false" aria-controls="toasts-code">View code</button>
+    </div>
+    <pre class="code" id="toasts-code" tabindex="0" hidden></pre>
+  </div>
+</article>
+<article class="card" id="slider" aria-labelledby="slider-h">
+  <div class="card-h"><span class="no">07</span><h2 id="slider-h">Slider</h2></div>
+  <div class="stage"><div class="stage-inner"><div class="nd-range">
+  <div class="nd-range__head"><label for="nd-range-1">Volume</label><span class="nd-range__val" aria-hidden="true">40</span></div>
+  <div class="nd-range__track">
+    <input id="nd-range-1" type="range" min="0" max="100" value="40">
+    <output class="nd-range__bubble" for="nd-range-1" aria-hidden="true">40</output>
+  </div>
+</div></div></div>
+  <div class="card-b">
+    <p class="idea"><b>A bubble with weight.</b> The value bubble leans back against the way you drag, like something carried, and settles upright when you stop.</p>
+    <div class="specs"><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M0,22 L30,0" stroke="var(--line)" fill="none"/><path d="M0,22 C10.2,-12.3 19.2,0.0 30,0" stroke="var(--accent)" stroke-width="1.6" fill="none"/></svg><span>spring, per frame</span></div>
+    <div class="states"><span>rest</span><span>grab</span><span>drag</span><span>keyboard</span><span>focus</span><span>reduced motion</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary copy" data-id="slider"><span class="ico"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl">Copy code</span></button>
+      <button type="button" class="btn view" aria-expanded="false" aria-controls="slider-code">View code</button>
+    </div>
+    <pre class="code" id="slider-code" tabindex="0" hidden></pre>
+  </div>
+</article>
+<article class="card" id="input" aria-labelledby="input-h">
+  <div class="card-h"><span class="no">08</span><h2 id="input-h">Text field</h2></div>
+  <div class="stage"><div class="stage-inner"><div class="nd-field">
+  <div class="nd-field__box">
+    <input id="nd-field-1" type="text" placeholder=" " maxlength="20" autocomplete="off" spellcheck="false"
+      data-allow="[A-Za-z0-9.]" data-error="Only letters, numbers and dots." aria-describedby="nd-field-1-msg">
+    <label for="nd-field-1">Username</label>
+  </div>
+  <div class="nd-field__foot">
+    <span id="nd-field-1-msg" class="nd-field__msg" aria-live="polite">Letters, numbers and dots.</span>
+    <span class="nd-field__count" aria-hidden="true">0/20</span>
+  </div>
+</div></div></div>
+  <div class="card-b">
+    <p class="idea"><b>A head-shake for no.</b> If you type a character the field can't take, it refuses it on the spot. The field gives a small dampened shake and the rule below turns red.</p>
+    <div class="specs"><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M0,22 L30,0" stroke="var(--line)" fill="none"/><path d="M0,22 C10.8,20.5 5.7,0.7 30,0" stroke="var(--accent)" stroke-width="1.6" fill="none"/></svg><span>400ms</span></div>
+    <div class="states"><span>empty</span><span>focus</span><span>filled</span><span>near limit</span><span>refused</span><span>reduced motion</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary copy" data-id="input"><span class="ico"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl">Copy code</span></button>
+      <button type="button" class="btn view" aria-expanded="false" aria-controls="input-code">View code</button>
+    </div>
+    <pre class="code" id="input-code" tabindex="0" hidden></pre>
+  </div>
+</article>
+<article class="card" id="accordion" aria-labelledby="accordion-h">
+  <div class="card-h"><span class="no">09</span><h2 id="accordion-h">Accordion</h2></div>
+  <div class="stage"><div class="stage-inner"><div class="nd-acc">
+  <div class="nd-acc__item">
+    <h3 class="nd-acc__h"><button type="button" id="nd-acc-b1" aria-expanded="true" aria-controls="nd-acc-1">Can I change the colours?<span class="nd-acc__icon" aria-hidden="true"></span></button></h3>
+    <div class="nd-acc__panel" id="nd-acc-1" role="region" aria-labelledby="nd-acc-b1" data-open>
+      <div class="nd-acc__inner"><p>Yes. Every component reads a few CSS variables, such as --nd-accent and --nd-ink.</p><p>Set them once and every component follows.</p></div>
+    </div>
+  </div>
+  <div class="nd-acc__item">
+    <h3 class="nd-acc__h"><button type="button" id="nd-acc-b2" aria-expanded="false" aria-controls="nd-acc-2">What happens with reduced motion?<span class="nd-acc__icon" aria-hidden="true"></span></button></h3>
+    <div class="nd-acc__panel" id="nd-acc-2" role="region" aria-labelledby="nd-acc-b2">
+      <div class="nd-acc__inner"><p>The state still changes and the colours still change.</p><p>Travel, overshoot and shake are switched off.</p></div>
+    </div>
+  </div>
+  <div class="nd-acc__item">
+    <h3 class="nd-acc__h"><button type="button" id="nd-acc-b3" aria-expanded="false" aria-controls="nd-acc-3">Do I need a framework?<span class="nd-acc__icon" aria-hidden="true"></span></button></h3>
+    <div class="nd-acc__panel" id="nd-acc-3" role="region" aria-labelledby="nd-acc-b3">
+      <div class="nd-acc__inner"><p>No. Each one is HTML, CSS and a few lines of plain JavaScript.</p></div>
+    </div>
+  </div>
+</div></div></div>
+  <div class="card-b">
+    <p class="idea"><b>Unfold.</b> The panel opens on a grid track, then its lines arrive top to bottom, 45ms apart. The plus lies down into a minus.</p>
+    <div class="specs"><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M0,22 L30,0" stroke="var(--line)" fill="none"/><path d="M0,22 C6.0,4.4 6.0,0.0 30,0" stroke="var(--accent)" stroke-width="1.6" fill="none"/></svg><span>340ms</span></div>
+    <div class="states"><span>closed</span><span>open</span><span>several open</span><span>focus</span><span>reduced motion</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary copy" data-id="accordion"><span class="ico"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl">Copy code</span></button>
+      <button type="button" class="btn view" aria-expanded="false" aria-controls="accordion-code">View code</button>
+    </div>
+    <pre class="code" id="accordion-code" tabindex="0" hidden></pre>
+  </div>
+</article>
+<article class="card" id="stepper" aria-labelledby="stepper-h">
+  <div class="card-h"><span class="no">10</span><h2 id="stepper-h">Stepper</h2></div>
+  <div class="stage"><div class="stage-inner"><div class="nd-step" role="group" aria-labelledby="nd-step-1" data-min="1" data-max="12">
+  <span id="nd-step-1">Guests</span>
+  <div class="nd-step__ctrl">
+    <button type="button" data-d="-1" aria-label="Remove a guest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>
+    <span class="nd-step__val" aria-hidden="true">2</span>
+    <button type="button" data-d="1" aria-label="Add a guest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg></button>
+  </div>
+  <span class="nd-step__live" aria-live="polite"></span>
+</div></div></div>
+  <div class="card-b">
+    <p class="idea"><b>Odometer.</b> Only the digits that change roll: up for more, down for less. At the limit, the number bumps against the wall instead of the button going dead.</p>
+    <div class="specs"><svg viewBox="0 0 30 22" aria-hidden="true"><path d="M0,22 L30,0" stroke="var(--line)" fill="none"/><path d="M0,22 C6.0,4.4 6.0,0.0 30,0" stroke="var(--accent)" stroke-width="1.6" fill="none"/></svg><span>300ms</span></div>
+    <div class="states"><span>min</span><span>between</span><span>max</span><span>limit bump</span><span>focus</span><span>reduced motion</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary copy" data-id="stepper"><span class="ico"><svg class="cp" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="lbl">Copy code</span></button>
+      <button type="button" class="btn view" aria-expanded="false" aria-controls="stepper-code">View code</button>
+    </div>
+    <pre class="code" id="stepper-code" tabindex="0" hidden></pre>
+  </div>
+</article>
+  </main>
+
+  <footer class="foot"><span>Nudge · working name · v0</span><span>Keyboard: Tab, Space, Enter, arrows, Escape</span></footer>
+</div>
+
+<script>
+var CODES = {"toggle":"<!-- Nudge · Toggle · v0 -->\n<div class=\"nd-switch-row\">\n  <span id=\"nd-switch-1\">Airplane mode<\/span>\n  <button class=\"nd-switch\" type=\"button\" role=\"switch\" aria-checked=\"false\" aria-labelledby=\"nd-switch-1\"><span class=\"nd-switch__knob\"><\/span><\/button>\n<\/div>\n<div class=\"nd-switch-row\">\n  <span id=\"nd-switch-2\">Wi-Fi<\/span>\n  <button class=\"nd-switch\" type=\"button\" role=\"switch\" aria-checked=\"true\" aria-labelledby=\"nd-switch-2\"><span class=\"nd-switch__knob\"><\/span><\/button>\n<\/div>\n\n<style>\n.nd-switch-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 240px; max-width: 100%; }\n.nd-switch {\n  --a: var(--nd-accent, #2f54eb); --off: var(--nd-muted, #dde1e7); --k: 26px;\n  position: relative; flex: none; width: 52px; height: 32px; padding: 0; border: 0; border-radius: 999px;\n  background: var(--off); cursor: pointer; isolation: isolate; -webkit-tap-highlight-color: transparent;\n}\n.nd-switch::before { content: \"\"; position: absolute; inset: -6px -4px; } /* 44px hit target */\n.nd-switch::after {\n  content: \"\"; position: absolute; inset: 0; border-radius: inherit; background: var(--a);\n  clip-path: circle(0 at 16px 50%); transition: clip-path .32s cubic-bezier(.2,.8,.2,1);\n}\n.nd-switch[aria-checked=\"true\"]::after { clip-path: circle(46px at 16px 50%); }\n.nd-switch__knob {\n  position: absolute; z-index: 1; top: 3px; left: 3px; width: var(--k); height: 26px; border-radius: 999px;\n  background: var(--nd-knob, #fff); box-shadow: 0 1px 2px rgba(0,0,0,.18), 0 3px 8px rgba(0,0,0,.08);\n  transition: left .36s cubic-bezier(.34,1.56,.64,1), width .18s cubic-bezier(.2,.8,.2,1);\n}\n.nd-switch:active { --k: 33px; } /* stretch on press */\n.nd-switch[aria-checked=\"true\"] .nd-switch__knob { left: calc(100% - var(--k) - 3px); }\n.nd-switch:focus-visible { outline: 2px solid var(--a); outline-offset: 3px; }\n@media (prefers-reduced-motion: reduce) { .nd-switch::after, .nd-switch__knob { transition-duration: 0s; } }\n<\/style>\n\n<script>\n(function(){\n    document.querySelectorAll('.nd-switch:not([data-nd])').forEach(function (s) {\n      s.setAttribute('data-nd', '');\n      s.addEventListener('click', function () {\n        s.setAttribute('aria-checked', s.getAttribute('aria-checked') === 'true' ? 'false' : 'true');\n      });\n    });\n  })();\n<\/script>\n","checkbox":"<!-- Nudge · Checkbox · v0 -->\n<fieldset class=\"nd-checks\">\n  <legend>Notify me about<\/legend>\n  <label class=\"nd-check\"><input type=\"checkbox\" checked><span class=\"nd-check__box\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/><\/svg><\/span>New comments<\/label>\n  <label class=\"nd-check\"><input type=\"checkbox\"><span class=\"nd-check__box\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/><\/svg><\/span>Mentions<\/label>\n  <label class=\"nd-check\"><input type=\"checkbox\"><span class=\"nd-check__box\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/><\/svg><\/span>Weekly digest<\/label>\n<\/fieldset>\n\n<style>\n.nd-checks { border: 0; margin: 0; padding: 0; display: grid; min-width: 200px; }\n.nd-checks legend { padding: 0; margin-bottom: 4px; font-size: .8em; color: var(--nd-sub, #5a606c); }\n.nd-check {\n  --a: var(--nd-accent, #2f54eb); --line: var(--nd-line, #c9ced6);\n  position: relative; display: flex; align-items: center; gap: 12px; min-height: 44px; cursor: pointer;\n  user-select: none; -webkit-tap-highlight-color: transparent;\n}\n.nd-check input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }\n.nd-check__box {\n  flex: none; display: grid; place-items: center; width: 22px; height: 22px;\n  border: 1.5px solid var(--line); border-radius: 7px;\n  transition: background-color .2s cubic-bezier(.2,.8,.2,1), border-color .2s, transform .32s cubic-bezier(.34,1.56,.64,1);\n}\n.nd-check:active .nd-check__box { transform: scale(.86); transition-duration: .2s, .2s, .12s; }\n.nd-check input:checked + .nd-check__box { background: var(--a); border-color: var(--a); }\n.nd-check svg {\n  width: 16px; height: 16px; fill: none; stroke: var(--nd-on-accent, #fff); stroke-width: 2.6;\n  stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 21; stroke-dashoffset: 21;\n  transition: stroke-dashoffset .12s;\n}\n.nd-check input:checked + .nd-check__box svg { stroke-dashoffset: 0; transition: stroke-dashoffset .3s cubic-bezier(.2,.8,.2,1) .08s; }\n.nd-check input:focus-visible + .nd-check__box { outline: 2px solid var(--a); outline-offset: 3px; }\n@media (prefers-reduced-motion: reduce) { .nd-check__box, .nd-check svg { transition: none !important; } }\n<\/style>\n","button":"<!-- Nudge · Button · v0 -->\n<div class=\"nd-btn-wrap\">\n  <button class=\"nd-btn\" type=\"button\" data-state=\"idle\">\n    <span class=\"nd-btn__label\">Save changes<\/span>\n    <span class=\"nd-btn__dots\" aria-hidden=\"true\"><i><\/i><i><\/i><i><\/i><\/span>\n    <svg class=\"nd-btn__icon nd-btn__ok\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12.5l4.5 4.5L19 7.5\"/><\/svg>\n    <svg class=\"nd-btn__icon nd-btn__err\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M7 7l10 10\"/><path d=\"M17 7L7 17\"/><\/svg>\n  <\/button>\n  <p class=\"nd-btn__status\" role=\"status\"><\/p>\n<\/div>\n\n<style>\n.nd-btn-wrap { display: grid; justify-items: center; gap: 8px; }\n.nd-btn {\n  --a: var(--nd-accent, #2f54eb); --bad: var(--nd-danger, #d92d20);\n  position: relative; display: inline-grid; place-items: center; box-sizing: border-box;\n  height: 44px; min-width: 44px; padding: 0 22px; border: 0; border-radius: 999px;\n  background: var(--nd-ink, #121418); color: var(--nd-paper, #fff); font: inherit; font-weight: 600;\n  white-space: nowrap; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent;\n  transition: width .34s cubic-bezier(.2,.8,.2,1), background-color .2s, transform .32s cubic-bezier(.34,1.56,.64,1);\n}\n.nd-btn > * { grid-area: 1 / 1; }\n.nd-btn:active { transform: scale(.96); transition-duration: .34s, .2s, .12s; }\n.nd-btn:focus-visible { outline: 2px solid var(--a); outline-offset: 3px; }\n.nd-btn:not([data-state=\"idle\"]) { padding: 0; cursor: default; }\n.nd-btn__label { transition: opacity .14s, transform .2s cubic-bezier(.2,.8,.2,1); }\n.nd-btn:not([data-state=\"idle\"]) .nd-btn__label { opacity: 0; transform: scale(.92); }\n.nd-btn__dots { display: flex; gap: 4px; opacity: 0; transition: opacity .14s; }\n.nd-btn__dots i { width: 5px; height: 5px; border-radius: 50%; background: currentColor; animation: nd-btn-dot .9s ease-in-out infinite paused; }\n.nd-btn__dots i:nth-child(2) { animation-delay: .12s; }\n.nd-btn__dots i:nth-child(3) { animation-delay: .24s; }\n.nd-btn[data-state=\"loading\"] .nd-btn__dots { opacity: 1; transition-delay: .2s; }\n.nd-btn[data-state=\"loading\"] .nd-btn__dots i { animation-play-state: running; }\n.nd-btn__icon { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }\n.nd-btn__ok { stroke-dasharray: 21; stroke-dashoffset: 21; transition: stroke-dashoffset .12s; }\n.nd-btn__err path { stroke-dasharray: 15; stroke-dashoffset: 15; transition: stroke-dashoffset .12s; }\n.nd-btn[data-state=\"done\"], .nd-btn[data-state=\"error\"] { color: var(--nd-on-accent, #fff); }\n.nd-btn[data-state=\"done\"] { background: var(--a); }\n.nd-btn[data-state=\"done\"] .nd-btn__ok,\n.nd-btn[data-state=\"error\"] .nd-btn__err path { stroke-dashoffset: 0; transition: stroke-dashoffset .3s cubic-bezier(.2,.8,.2,1) .1s; }\n.nd-btn[data-state=\"error\"] { background: var(--bad); animation: nd-shake .42s cubic-bezier(.36,.07,.19,.97); }\n.nd-btn__status { margin: 0; min-height: 1.4em; font-size: .875em; color: var(--nd-sub, #5a606c); }\n.nd-btn__status.is-bad { color: var(--nd-danger, #d92d20); }\n@keyframes nd-btn-dot { 0%, 100% { transform: translateY(0); opacity: .5; } 40% { transform: translateY(-4px); opacity: 1; } }\n@keyframes nd-shake { 20% { transform: translateX(-5px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-2.5px); } 80% { transform: translateX(1px); } }\n@media (prefers-reduced-motion: reduce) {\n  .nd-btn, .nd-btn * { transition-duration: 0s !important; transition-delay: 0s !important; }\n  .nd-btn, .nd-btn__dots i { animation: none !important; }\n}\n<\/style>\n\n<script>\n(function(){\n    document.querySelectorAll('.nd-btn:not([data-nd])').forEach(function (b) {\n      b.setAttribute('data-nd', '');\n      var status = b.parentNode.querySelector('.nd-btn__status');\n      // Replace task() with your real request. Resolve = saved, reject = failed.\n      function task() {\n        return new Promise(function (ok, fail) { setTimeout(b.dataset.fail === 'true' ? fail : ok, 1200); });\n      }\n      b.addEventListener('click', function () {\n        if (b.dataset.state !== 'idle') return;\n        var w = b.offsetWidth;\n        b.style.width = w + 'px';\n        void b.offsetWidth;\n        b.dataset.state = 'loading';\n        b.setAttribute('aria-busy', 'true');\n        b.style.width = b.offsetHeight + 'px';\n        if (status) { status.textContent = ''; status.classList.remove('is-bad'); }\n        task().then(function () { return 'done'; }, function () { return 'error'; }).then(function (r) {\n          b.dataset.state = r;\n          b.removeAttribute('aria-busy');\n          if (status) {\n            status.textContent = r === 'done' ? 'Saved' : 'Couldn’t save. Try again.';\n            status.classList.toggle('is-bad', r === 'error');\n          }\n          setTimeout(function () {\n            b.style.width = w + 'px';\n            b.dataset.state = 'idle';\n            setTimeout(function () { b.style.width = ''; }, 360);\n          }, r === 'done' ? 900 : 1300);\n        });\n      });\n    });\n  })();\n<\/script>\n","tabs":"<!-- Nudge · Tabs · v0 -->\n<div class=\"nd-tabs\">\n  <div class=\"nd-tabs__list\" role=\"tablist\" aria-label=\"Project\">\n    <button type=\"button\" role=\"tab\" id=\"nd-tab-1\" aria-controls=\"nd-panel-1\" aria-selected=\"true\">Overview<\/button>\n    <button type=\"button\" role=\"tab\" id=\"nd-tab-2\" aria-controls=\"nd-panel-2\" aria-selected=\"false\" tabindex=\"-1\">Activity<\/button>\n    <button type=\"button\" role=\"tab\" id=\"nd-tab-3\" aria-controls=\"nd-panel-3\" aria-selected=\"false\" tabindex=\"-1\">Settings<\/button>\n    <span class=\"nd-tabs__ink\" aria-hidden=\"true\"><\/span>\n  <\/div>\n  <div class=\"nd-tabs__panel\" role=\"tabpanel\" id=\"nd-panel-1\" aria-labelledby=\"nd-tab-1\" tabindex=\"0\">Three screens shipped this week. Two are waiting on review.<\/div>\n  <div class=\"nd-tabs__panel\" role=\"tabpanel\" id=\"nd-panel-2\" aria-labelledby=\"nd-tab-2\" tabindex=\"0\" hidden>Maya left a comment on Checkout twelve minutes ago.<\/div>\n  <div class=\"nd-tabs__panel\" role=\"tabpanel\" id=\"nd-panel-3\" aria-labelledby=\"nd-tab-3\" tabindex=\"0\" hidden>Notifications are on for mentions only.<\/div>\n<\/div>\n\n<style>\n.nd-tabs { --a: var(--nd-accent, #2f54eb); width: 340px; max-width: 100%; }\n.nd-tabs__list { position: relative; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; box-shadow: inset 0 -1px var(--nd-line, #d6dae0); }\n.nd-tabs__list::-webkit-scrollbar { display: none; }\n.nd-tabs__list [role=\"tab\"] {\n  flex: none; min-height: 44px; padding: 0 12px; border: 0; border-radius: 8px 8px 0 0; background: none;\n  color: var(--nd-sub, #5a606c); font: inherit; font-weight: 500; cursor: pointer;\n  transition: color .2s; -webkit-tap-highlight-color: transparent;\n}\n.nd-tabs__list [role=\"tab\"]:hover, .nd-tabs__list [aria-selected=\"true\"] { color: var(--nd-ink, #121418); }\n.nd-tabs__list [role=\"tab\"]:focus-visible { outline: 2px solid var(--a); outline-offset: -2px; }\n.nd-tabs__ink { position: absolute; bottom: 0; left: 0; right: 100%; height: 2px; border-radius: 2px; background: var(--a); }\n.nd-tabs__panel { padding: 16px 2px 0; line-height: 1.55; animation: nd-tab-in .32s cubic-bezier(.2,.8,.2,1); }\n.nd-tabs__panel:focus-visible { outline: 2px solid var(--a); outline-offset: 4px; border-radius: 4px; }\n@keyframes nd-tab-in { from { opacity: 0; transform: translateX(var(--nd-dx, 0)); } }\n@media (prefers-reduced-motion: reduce) { .nd-tabs__panel { animation: none; } .nd-tabs__ink { transition: none !important; } }\n<\/style>\n\n<script>\n(function(){\n    document.querySelectorAll('.nd-tabs:not([data-nd])').forEach(function (root) {\n      root.setAttribute('data-nd', '');\n      var list = root.querySelector('[role=\"tablist\"]'), ink = root.querySelector('.nd-tabs__ink');\n      var tabs = [].slice.call(list.querySelectorAll('[role=\"tab\"]'));\n      var cur = Math.max(0, tabs.findIndex(function (t) { return t.getAttribute('aria-selected') === 'true'; }));\n      var e = 'cubic-bezier(.2,.8,.2,1)';\n      function place(dir) {\n        var t = tabs[cur], l = t.offsetLeft, r = list.scrollWidth - l - t.offsetWidth;\n        // the edge you are moving toward leaves first; the other follows 90ms later\n        ink.style.transition = !dir ? 'none'\n          : dir > 0 ? 'right .24s ' + e + ', left .24s ' + e + ' .09s'\n          : 'left .24s ' + e + ', right .24s ' + e + ' .09s';\n        ink.style.left = l + 'px';\n        ink.style.right = r + 'px';\n      }\n      function select(i, focus) {\n        if (i === cur) return;\n        var dir = i > cur ? 1 : -1;\n        tabs.forEach(function (t, j) {\n          var on = j === i, p = document.getElementById(t.getAttribute('aria-controls'));\n          t.setAttribute('aria-selected', String(on));\n          t.tabIndex = on ? 0 : -1;\n          if (p) { p.hidden = !on; if (on) p.style.setProperty('--nd-dx', dir * 10 + 'px'); }\n        });\n        cur = i;\n        if (focus) tabs[i].focus();\n        place(dir);\n      }\n      tabs.forEach(function (t, i) { t.addEventListener('click', function () { select(i); }); });\n      list.addEventListener('keydown', function (ev) {\n        var n = tabs.length, k = ev.key;\n        var i = k === 'ArrowRight' ? (cur + 1) % n : k === 'ArrowLeft' ? (cur - 1 + n) % n : k === 'Home' ? 0 : k === 'End' ? n - 1 : -1;\n        if (i < 0) return;\n        ev.preventDefault();\n        select(i, true);\n      });\n      place(0);\n      addEventListener('resize', function () { place(0); });\n      if (document.fonts) document.fonts.ready.then(function () { place(0); });\n    });\n  })();\n<\/script>\n","tooltip":"<!-- Nudge · Tooltip · v0 -->\n<div class=\"nd-tip\" role=\"group\" aria-label=\"Formatting\">\n  <button type=\"button\" aria-label=\"Bold\" aria-pressed=\"false\" data-key=\"⌘B\" aria-keyshortcuts=\"Meta+B\"><b>B<\/b><\/button>\n  <button type=\"button\" aria-label=\"Italic\" aria-pressed=\"false\" data-key=\"⌘I\" aria-keyshortcuts=\"Meta+I\"><i>I<\/i><\/button>\n  <button type=\"button\" aria-label=\"Underline\" aria-pressed=\"false\" data-key=\"⌘U\" aria-keyshortcuts=\"Meta+U\"><u>U<\/u><\/button>\n  <button type=\"button\" aria-label=\"Strikethrough\" aria-pressed=\"false\" data-key=\"⇧⌘X\" aria-keyshortcuts=\"Shift+Meta+X\"><s>S<\/s><\/button>\n  <span class=\"nd-tip__bubble\" aria-hidden=\"true\"><span class=\"nd-tip__text\"><\/span><kbd><\/kbd><\/span>\n<\/div>\n\n<style>\n.nd-tip {\n  --a: var(--nd-accent, #2f54eb);\n  position: relative; display: inline-flex; gap: 4px; padding: 4px;\n  border: 1px solid var(--nd-line, #d6dae0); border-radius: 14px; background: var(--nd-paper, #fff);\n}\n.nd-tip > button {\n  width: 44px; height: 44px; border: 0; border-radius: 10px; background: none; color: var(--nd-ink, #121418);\n  font: inherit; font-size: 16px; cursor: pointer; -webkit-tap-highlight-color: transparent;\n  transition: background-color .18s, color .18s, transform .3s cubic-bezier(.34,1.56,.64,1);\n}\n.nd-tip > button:hover { background: var(--nd-muted, #eceef2); }\n.nd-tip > button[aria-pressed=\"true\"] { background: var(--nd-muted, #eceef2); color: var(--a); }\n.nd-tip > button:active { transform: scale(.9); transition-duration: .18s, .18s, .12s; }\n.nd-tip > button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }\n.nd-tip__bubble {\n  position: absolute; bottom: calc(100% + 10px); left: 0; display: flex; align-items: center; gap: 8px;\n  padding: 6px 10px; border-radius: 9px; background: var(--nd-ink, #121418); color: var(--nd-paper, #fff);\n  font-size: 13px; line-height: 1.3; white-space: nowrap; pointer-events: none; opacity: 0;\n  transform: translateX(-50%) translateY(4px) scale(.94); transform-origin: 50% 100%;\n  transition: opacity .16s, transform .2s cubic-bezier(.2,.8,.2,1), left .2s cubic-bezier(.2,.8,.2,1);\n}\n.nd-tip__bubble::after { content: \"\"; position: absolute; top: 100%; left: 50%; margin-left: -5px; border: 5px solid transparent; border-top-color: var(--nd-ink, #121418); }\n.nd-tip__bubble.is-on { opacity: 1; transform: translateX(-50%); pointer-events: auto; }\n.nd-tip__bubble.no-glide { transition: none; }\n.nd-tip__bubble kbd { font: inherit; font-size: 12px; opacity: .6; }\n@media (prefers-reduced-motion: reduce) {\n  .nd-tip__bubble, .nd-tip__bubble.is-on { transform: translateX(-50%); transition: opacity .16s; }\n  .nd-tip > button { transition: none; }\n}\n<\/style>\n\n<script>\n(function(){\n    document.querySelectorAll('.nd-tip:not([data-nd])').forEach(function (g) {\n      g.setAttribute('data-nd', '');\n      var tip = g.querySelector('.nd-tip__bubble'), txt = tip.querySelector('.nd-tip__text'), kbd = tip.querySelector('kbd');\n      var warm = false, showT, hideT, coolT;\n      function move(b) {\n        txt.textContent = b.getAttribute('aria-label');\n        kbd.textContent = b.dataset.key || '';\n        kbd.hidden = !b.dataset.key;\n        tip.style.left = (b.offsetLeft + b.offsetWidth / 2) + 'px';\n      }\n      function show(b, now) {\n        clearTimeout(hideT); clearTimeout(coolT); clearTimeout(showT);\n        if (warm) { move(b); tip.classList.add('is-on'); return; } // already warm: glide\n        showT = setTimeout(function () {\n          tip.classList.add('no-glide'); move(b); void tip.offsetWidth; tip.classList.remove('no-glide');\n          tip.classList.add('is-on'); warm = true;\n        }, now ? 0 : 500);\n      }\n      function hide() {\n        clearTimeout(showT);\n        hideT = setTimeout(function () {\n          tip.classList.remove('is-on');\n          coolT = setTimeout(function () { warm = false; }, 600);\n        }, 200);\n      }\n      g.querySelectorAll('button[aria-label]').forEach(function (b) {\n        b.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') show(b); });\n        b.addEventListener('pointerleave', hide);\n        b.addEventListener('focus', function () { if (b.matches(':focus-visible')) show(b, true); });\n        b.addEventListener('blur', hide);\n        b.addEventListener('click', function () {\n          if (b.hasAttribute('aria-pressed')) b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));\n        });\n      });\n      tip.addEventListener('pointerenter', function () { clearTimeout(hideT); });\n      tip.addEventListener('pointerleave', hide);\n      document.addEventListener('keydown', function (e) { // Escape closes it wherever focus is (WCAG 1.4.13)\n        if (e.key === 'Escape' && (tip.classList.contains('is-on') || showT)) { clearTimeout(showT); showT = 0; tip.classList.remove('is-on'); warm = false; }\n      });\n    });\n  })();\n<\/script>\n","toasts":"<!-- Nudge · Toast stack · v0 -->\n<button class=\"nd-toast-trigger\" type=\"button\" data-toast=\"Invite sent to sam@studio.co|Link copied|Changes saved|3 files uploaded\">Show a toast<\/button>\n<ol class=\"nd-toasts\" aria-live=\"polite\" aria-label=\"Notifications\"><\/ol>\n\n<style>\n.nd-toast-trigger {\n  min-height: 44px; padding: 0 18px; border: 1px solid var(--nd-line, #d6dae0); border-radius: 999px;\n  background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); font: inherit; font-weight: 500; cursor: pointer;\n  transition: transform .3s cubic-bezier(.34,1.56,.64,1), border-color .18s;\n}\n.nd-toast-trigger:hover { border-color: var(--nd-ink, #121418); }\n.nd-toast-trigger:active { transform: scale(.96); transition-duration: .12s; }\n.nd-toast-trigger:focus-visible { outline: 2px solid var(--nd-accent, #2f54eb); outline-offset: 2px; }\n.nd-toasts {\n  --a: var(--nd-accent, #2f54eb);\n  position: fixed; right: 16px; bottom: 16px; z-index: 50; width: min(340px, calc(100vw - 32px));\n  margin: 0; padding: 0; list-style: none;\n}\n.nd-toast {\n  --i: 0;\n  position: absolute; right: 0; bottom: 0; left: 0; display: flex; align-items: center; gap: 10px;\n  min-height: 56px; padding: 6px 6px 6px 14px; border: 1px solid var(--nd-line, #d6dae0); border-radius: 14px;\n  background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); box-shadow: 0 6px 24px rgba(15,20,30,.12);\n  font-size: 14px; touch-action: pan-y; transform-origin: 50% 100%;\n  transform: translateY(calc(var(--i) * -10px)) scale(calc(1 - var(--i) * .05));\n  transition: transform .34s cubic-bezier(.2,.8,.2,1), opacity .3s, translate .3s cubic-bezier(.2,.8,.2,1);\n  animation: nd-toast-in .34s cubic-bezier(.2,.8,.2,1);\n}\n.nd-toast::after { content: \"\"; position: absolute; left: 0; right: 0; top: 100%; height: 10px; } /* bridges the gap while fanned out */\n.nd-toasts:hover .nd-toast, .nd-toasts:focus-within .nd-toast { transform: translateY(calc(var(--i) * (-100% - 8px))); }\n.nd-toast.is-hidden { opacity: 0; pointer-events: none; }\n.nd-toast.is-out { opacity: 0; translate: calc(var(--sx, 1) * 110%) 0; pointer-events: none; }\n.nd-toast__dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--a); }\n.nd-toast__text { flex: 1; min-width: 0; }\n.nd-toast__close {\n  flex: none; width: 44px; height: 44px; border: 0; border-radius: 10px; background: none;\n  color: var(--nd-sub, #5a606c); font: inherit; font-size: 20px; line-height: 1; cursor: pointer;\n}\n.nd-toast__close:hover { background: var(--nd-muted, #eceef2); color: var(--nd-ink, #121418); }\n.nd-toast__close:focus-visible { outline: 2px solid var(--a); outline-offset: -2px; }\n.nd-toast__bar {\n  position: absolute; left: 14px; right: 14px; bottom: 5px; height: 2px; border-radius: 2px;\n  background: var(--a); opacity: .45; transform-origin: left; animation: nd-toast-timer 4.5s linear forwards;\n}\n.nd-toasts:hover .nd-toast__bar, .nd-toasts:focus-within .nd-toast__bar { animation-play-state: paused; }\n@keyframes nd-toast-in { from { transform: translateY(120%); opacity: 0; } }\n@keyframes nd-toast-timer { to { transform: scaleX(0); } }\n@media (prefers-reduced-motion: reduce) {\n  .nd-toast { animation: none; transition: opacity .2s; }\n  .nd-toast.is-out { translate: 0 0; }\n}\n<\/style>\n\n<script>\n(function(){\n    var region = document.querySelector('.nd-toasts');\n    if (!region || region.hasAttribute('data-nd')) return;\n    region.setAttribute('data-nd', '');\n    function layout() {\n      [].slice.call(region.querySelectorAll('.nd-toast:not(.is-out)')).reverse().forEach(function (t, i) {\n        t.style.setProperty('--i', i);\n        t.classList.toggle('is-hidden', i > 2);\n      });\n    }\n    function dismiss(t, dir) {\n      if (t.classList.contains('is-out')) return;\n      t.style.setProperty('--sx', dir || 1);\n      t.classList.add('is-out');\n      layout();\n      setTimeout(function () { t.remove(); }, 340);\n    }\n    window.ndToast = function (text) {\n      var t = document.createElement('li');\n      t.className = 'nd-toast';\n      t.innerHTML = '<span class=\"nd-toast__dot\" aria-hidden=\"true\"><\/span><span class=\"nd-toast__text\"><\/span>' +\n        '<button type=\"button\" class=\"nd-toast__close\" aria-label=\"Dismiss\">×<\/button><span class=\"nd-toast__bar\" aria-hidden=\"true\"><\/span>';\n      t.querySelector('.nd-toast__text').textContent = text;\n      t.querySelector('.nd-toast__close').addEventListener('click', function () { dismiss(t); });\n      t.querySelector('.nd-toast__bar').addEventListener('animationend', function () { dismiss(t); });\n      var x0 = null, dx = 0; // swipe to dismiss\n      t.addEventListener('pointerdown', function (e) {\n        if (e.target.closest('button')) return;\n        x0 = e.clientX; dx = 0; t.setPointerCapture(e.pointerId); t.style.transition = 'none';\n      });\n      t.addEventListener('pointermove', function (e) { if (x0 !== null) { dx = e.clientX - x0; t.style.translate = dx + 'px 0'; } });\n      function end() {\n        if (x0 === null) return;\n        x0 = null; t.style.transition = ''; t.style.translate = '';\n        if (Math.abs(dx) > 70) dismiss(t, dx > 0 ? 1 : -1);\n      }\n      t.addEventListener('pointerup', end);\n      t.addEventListener('pointercancel', end);\n      region.appendChild(t);\n      var live = region.querySelectorAll('.nd-toast:not(.is-out)');\n      if (live.length > 5) dismiss(live[0]);\n      layout();\n    };\n    document.querySelectorAll('.nd-toast-trigger').forEach(function (b) {\n      var msgs = (b.dataset.toast || 'Done').split('|'), n = 0;\n      b.addEventListener('click', function () { window.ndToast(msgs[n++ % msgs.length]); });\n    });\n  })();\n<\/script>\n","slider":"<!-- Nudge · Slider · v0 -->\n<div class=\"nd-range\">\n  <div class=\"nd-range__head\"><label for=\"nd-range-1\">Volume<\/label><span class=\"nd-range__val\" aria-hidden=\"true\">40<\/span><\/div>\n  <div class=\"nd-range__track\">\n    <input id=\"nd-range-1\" type=\"range\" min=\"0\" max=\"100\" value=\"40\">\n    <output class=\"nd-range__bubble\" for=\"nd-range-1\" aria-hidden=\"true\">40<\/output>\n  <\/div>\n<\/div>\n\n<style>\n.nd-range { --a: var(--nd-accent, #2f54eb); --off: var(--nd-muted, #dde1e7); --f: .4; --tilt: 0deg; width: 280px; max-width: 100%; }\n.nd-range__head { display: flex; justify-content: space-between; font-size: 14px; color: var(--nd-sub, #5a606c); }\n.nd-range__val { color: var(--nd-ink, #121418); font-variant-numeric: tabular-nums; }\n.nd-range__track { position: relative; }\n.nd-range input { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 44px; margin: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }\n.nd-range input:focus { outline: none; }\n.nd-range input::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: linear-gradient(to right, var(--a) calc(11px + var(--f) * (100% - 22px)), var(--off) 0); }\n.nd-range input::-moz-range-track { height: 6px; border-radius: 999px; background: var(--off); }\n.nd-range input::-moz-range-progress { height: 6px; border-radius: 999px; background: var(--a); }\n.nd-range input::-webkit-slider-thumb {\n  -webkit-appearance: none; width: 22px; height: 22px; margin-top: -8px; border: 0; border-radius: 50%;\n  background: var(--nd-knob, #fff); box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.22);\n  transition: transform .3s cubic-bezier(.34,1.56,.64,1);\n}\n.nd-range input::-moz-range-thumb {\n  width: 22px; height: 22px; border: 0; border-radius: 50%;\n  background: var(--nd-knob, #fff); box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.22);\n  transition: transform .3s cubic-bezier(.34,1.56,.64,1);\n}\n.nd-range input:active::-webkit-slider-thumb { transform: scale(1.25); }\n.nd-range input:active::-moz-range-thumb { transform: scale(1.25); }\n.nd-range input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--nd-paper, #fff), 0 0 0 5px var(--a); }\n.nd-range input:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--nd-paper, #fff), 0 0 0 5px var(--a); }\n.nd-range__bubble {\n  position: absolute; bottom: calc(100% - 6px); left: calc(11px + var(--f) * (100% - 22px));\n  min-width: 36px; padding: 4px 8px; border-radius: 8px; box-sizing: border-box;\n  background: var(--nd-ink, #121418); color: var(--nd-paper, #fff); font-size: 13px; text-align: center;\n  font-variant-numeric: tabular-nums; pointer-events: none; opacity: 0;\n  transform-origin: 50% calc(100% + 16px); transform: translateX(-50%) rotate(var(--tilt)) scale(.6);\n  transition: opacity .16s, transform .12s cubic-bezier(.2,.8,.2,1);\n}\n.nd-range.is-active .nd-range__bubble, .nd-range input:focus-visible + .nd-range__bubble { opacity: 1; transform: translateX(-50%) rotate(var(--tilt)); }\n@media (prefers-reduced-motion: reduce) {\n  .nd-range input::-webkit-slider-thumb { transition: none; }\n  .nd-range input::-moz-range-thumb { transition: none; }\n  .nd-range__bubble { transition: opacity .16s; }\n}\n<\/style>\n\n<script>\n(function(){\n    document.querySelectorAll('.nd-range:not([data-nd])').forEach(function (r) {\n      r.setAttribute('data-nd', '');\n      var i = r.querySelector('input'), bub = r.querySelector('.nd-range__bubble'), val = r.querySelector('.nd-range__val');\n      var still = matchMedia('(prefers-reduced-motion: reduce)');\n      var last = +i.value, lastT = performance.now(), push = 0, ang = 0, raf = 0;\n      function paint() {\n        var min = +i.min || 0, max = +i.max || 100;\n        r.style.setProperty('--f', (i.value - min) / (max - min));\n        bub.textContent = i.value;\n        if (val) val.textContent = i.value;\n      }\n      function tick() { // a damped spring back to upright\n        push *= .82;\n        ang += (push - ang) * .25;\n        r.style.setProperty('--tilt', ang.toFixed(2) + 'deg');\n        if (Math.abs(ang) > .05 || Math.abs(push) > .05) raf = requestAnimationFrame(tick);\n        else { raf = 0; r.style.setProperty('--tilt', '0deg'); }\n      }\n      i.addEventListener('input', function () {\n        var now = performance.now(), dt = Math.max(8, now - lastT), range = (+i.max || 100) - (+i.min || 0);\n        var vel = (i.value - last) / range * 100 / dt;\n        last = +i.value; lastT = now;\n        paint();\n        if (still.matches) return;\n        push = Math.max(-22, Math.min(22, -vel * 70));\n        if (!raf) raf = requestAnimationFrame(tick);\n      });\n      var kb = 0, pointer = false;\n      i.addEventListener('keydown', function () { // keyboard users see the bubble while they change the value\n        if (pointer) return;\n        r.classList.add('is-active'); clearTimeout(kb);\n        kb = setTimeout(function () { r.classList.remove('is-active'); }, 900);\n      });\n      i.addEventListener('pointerdown', function () { pointer = true; clearTimeout(kb); r.classList.add('is-active'); });\n      ['pointerup', 'pointercancel'].forEach(function (ev) { addEventListener(ev, function () { if (pointer) { pointer = false; r.classList.remove('is-active'); } }); });\n      paint();\n    });\n  })();\n<\/script>\n","input":"<!-- Nudge · Text field · v0 -->\n<div class=\"nd-field\">\n  <div class=\"nd-field__box\">\n    <input id=\"nd-field-1\" type=\"text\" placeholder=\" \" maxlength=\"20\" autocomplete=\"off\" spellcheck=\"false\"\n      data-allow=\"[A-Za-z0-9.]\" data-error=\"Only letters, numbers and dots.\" aria-describedby=\"nd-field-1-msg\">\n    <label for=\"nd-field-1\">Username<\/label>\n  <\/div>\n  <div class=\"nd-field__foot\">\n    <span id=\"nd-field-1-msg\" class=\"nd-field__msg\" aria-live=\"polite\">Letters, numbers and dots.<\/span>\n    <span class=\"nd-field__count\" aria-hidden=\"true\">0/20<\/span>\n  <\/div>\n<\/div>\n\n<style>\n.nd-field { --a: var(--nd-accent, #2f54eb); --bad: var(--nd-danger, #d92d20); width: 300px; max-width: 100%; }\n.nd-field__box { position: relative; }\n.nd-field input {\n  display: block; width: 100%; box-sizing: border-box; height: 56px; padding: 22px 14px 6px;\n  border: 1.5px solid var(--nd-line, #c9ced6); border-radius: 12px; outline: 0;\n  background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); font: inherit; font-size: 16px;\n  transition: border-color .2s, box-shadow .2s;\n}\n.nd-field input:focus { border-color: var(--a); box-shadow: 0 0 0 4px color-mix(in srgb, var(--a) 20%, transparent); }\n.nd-field label {\n  position: absolute; left: 15px; top: 18px; color: var(--nd-sub, #5a606c); font-size: 16px; line-height: 20px;\n  pointer-events: none; transform-origin: 0 0; transition: transform .2s cubic-bezier(.2,.8,.2,1), color .2s;\n}\n.nd-field input:focus + label, .nd-field input:not(:placeholder-shown) + label { transform: translateY(-10px) scale(.75); }\n.nd-field input:focus + label { color: var(--a); }\n.nd-field__foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 6px; font-size: 13px; color: var(--nd-sub, #5a606c); }\n.nd-field__msg { transition: color .2s; }\n.nd-field__count { font-variant-numeric: tabular-nums; transition: color .2s; }\n.nd-field.is-near .nd-field__count { color: var(--nd-ink, #121418); font-weight: 600; }\n.nd-field.is-bad input, .nd-field.is-bad input:focus { border-color: var(--bad); box-shadow: 0 0 0 4px color-mix(in srgb, var(--bad) 18%, transparent); }\n.nd-field.is-bad label { color: var(--bad); }\n.nd-field.is-bad .nd-field__msg { color: var(--bad); }\n.nd-field.is-shake .nd-field__box { animation: nd-shake .4s cubic-bezier(.36,.07,.19,.97); }\n@keyframes nd-shake { 20% { transform: translateX(-5px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-2.5px); } 80% { transform: translateX(1px); } }\n@media (prefers-reduced-motion: reduce) { .nd-field.is-shake .nd-field__box { animation: none; } .nd-field label { transition: color .2s; } }\n<\/style>\n\n<script>\n(function(){\n    document.querySelectorAll('.nd-field:not([data-nd])').forEach(function (f) {\n      f.setAttribute('data-nd', '');\n      var i = f.querySelector('input'), msg = f.querySelector('.nd-field__msg'), cnt = f.querySelector('.nd-field__count');\n      var ok = new RegExp('^' + (i.dataset.allow || '.') + '*$'), hint = msg.textContent, prev = i.value, t = 0, lastShake = 0;\n      function count() {\n        var m = i.maxLength > 0 ? i.maxLength : 0;\n        if (cnt) cnt.textContent = i.value.length + (m ? '/' + m : '');\n        f.classList.toggle('is-near', !!m && i.value.length >= m - 3);\n      }\n      i.addEventListener('input', function () {\n        if (!ok.test(i.value)) {\n          var pos = Math.max(0, i.selectionStart - (i.value.length - prev.length));\n          i.value = prev;\n          i.setSelectionRange(pos, pos);\n          f.classList.add('is-bad');\n          msg.textContent = i.dataset.error || hint;\n          var now = Date.now();\n          if (now - lastShake > 400) { // one shake at a time, even for fast typists\n            lastShake = now;\n            f.classList.remove('is-shake'); void f.offsetWidth; f.classList.add('is-shake');\n          }\n          clearTimeout(t);\n          t = setTimeout(function () { f.classList.remove('is-bad'); msg.textContent = hint; }, 2200);\n        } else prev = i.value;\n        count();\n      });\n      f.addEventListener('animationend', function () { f.classList.remove('is-shake'); });\n      count();\n    });\n  })();\n<\/script>\n","accordion":"<!-- Nudge · Accordion · v0 -->\n<div class=\"nd-acc\">\n  <div class=\"nd-acc__item\">\n    <h3 class=\"nd-acc__h\"><button type=\"button\" id=\"nd-acc-b1\" aria-expanded=\"true\" aria-controls=\"nd-acc-1\">Can I change the colours?<span class=\"nd-acc__icon\" aria-hidden=\"true\"><\/span><\/button><\/h3>\n    <div class=\"nd-acc__panel\" id=\"nd-acc-1\" role=\"region\" aria-labelledby=\"nd-acc-b1\" data-open>\n      <div class=\"nd-acc__inner\"><p>Yes. Every component reads a few CSS variables, such as --nd-accent and --nd-ink.<\/p><p>Set them once and every component follows.<\/p><\/div>\n    <\/div>\n  <\/div>\n  <div class=\"nd-acc__item\">\n    <h3 class=\"nd-acc__h\"><button type=\"button\" id=\"nd-acc-b2\" aria-expanded=\"false\" aria-controls=\"nd-acc-2\">What happens with reduced motion?<span class=\"nd-acc__icon\" aria-hidden=\"true\"><\/span><\/button><\/h3>\n    <div class=\"nd-acc__panel\" id=\"nd-acc-2\" role=\"region\" aria-labelledby=\"nd-acc-b2\">\n      <div class=\"nd-acc__inner\"><p>The state still changes and the colours still change.<\/p><p>Travel, overshoot and shake are switched off.<\/p><\/div>\n    <\/div>\n  <\/div>\n  <div class=\"nd-acc__item\">\n    <h3 class=\"nd-acc__h\"><button type=\"button\" id=\"nd-acc-b3\" aria-expanded=\"false\" aria-controls=\"nd-acc-3\">Do I need a framework?<span class=\"nd-acc__icon\" aria-hidden=\"true\"><\/span><\/button><\/h3>\n    <div class=\"nd-acc__panel\" id=\"nd-acc-3\" role=\"region\" aria-labelledby=\"nd-acc-b3\">\n      <div class=\"nd-acc__inner\"><p>No. Each one is HTML, CSS and a few lines of plain JavaScript.<\/p><\/div>\n    <\/div>\n  <\/div>\n<\/div>\n\n<style>\n.nd-acc { --a: var(--nd-accent, #2f54eb); width: 360px; max-width: 100%; border-top: 1px solid var(--nd-line, #d6dae0); text-align: left; }\n.nd-acc__item { border-bottom: 1px solid var(--nd-line, #d6dae0); }\n.nd-acc__h { margin: 0; font: inherit; }\n.nd-acc__h button {\n  display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 16px; min-height: 50px;\n  padding: 0 2px; border: 0; background: none; color: var(--nd-ink, #121418); font: inherit; font-weight: 600;\n  text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent;\n}\n.nd-acc__h button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; border-radius: 6px; }\n.nd-acc__icon { position: relative; flex: none; width: 14px; height: 14px; }\n.nd-acc__icon::before, .nd-acc__icon::after {\n  content: \"\"; position: absolute; left: 0; top: 6px; width: 14px; height: 2px; border-radius: 2px; background: currentColor;\n  transition: transform .36s cubic-bezier(.34,1.56,.64,1);\n}\n.nd-acc__icon::after { transform: rotate(90deg); }\n[aria-expanded=\"true\"] > .nd-acc__icon::before, [aria-expanded=\"true\"] > .nd-acc__icon::after { transform: rotate(180deg); }\n.nd-acc__panel {\n  display: grid; grid-template-rows: 0fr; visibility: hidden;\n  transition: grid-template-rows .34s cubic-bezier(.2,.8,.2,1), visibility 0s .34s;\n}\n.nd-acc__panel[data-open] { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .34s cubic-bezier(.2,.8,.2,1), visibility 0s; }\n.nd-acc__inner { overflow: hidden; min-height: 0; }\n.nd-acc__inner > * { margin: 0 0 10px; color: var(--nd-sub, #5a606c); opacity: 0; transform: translateY(-6px); transition: opacity .2s, transform .3s cubic-bezier(.2,.8,.2,1); }\n.nd-acc__inner > :last-child { margin-bottom: 16px; }\n.nd-acc__panel[data-open] .nd-acc__inner > * { opacity: 1; transform: none; transition-delay: calc(var(--n, 0) * 45ms + 60ms); }\n@media (prefers-reduced-motion: reduce) { .nd-acc *, .nd-acc *::before, .nd-acc *::after { transition-duration: 0s !important; transition-delay: 0s !important; } }\n<\/style>\n\n<script>\n(function(){\n    document.querySelectorAll('.nd-acc:not([data-nd])').forEach(function (a) {\n      a.setAttribute('data-nd', '');\n      a.querySelectorAll('.nd-acc__h button').forEach(function (b) {\n        var p = document.getElementById(b.getAttribute('aria-controls'));\n        p.querySelectorAll('.nd-acc__inner > *').forEach(function (c, n) { c.style.setProperty('--n', n); });\n        b.addEventListener('click', function () {\n          var open = b.getAttribute('aria-expanded') !== 'true';\n          b.setAttribute('aria-expanded', String(open));\n          p.toggleAttribute('data-open', open);\n        });\n      });\n    });\n  })();\n<\/script>\n","stepper":"<!-- Nudge · Stepper · v0 -->\n<div class=\"nd-step\" role=\"group\" aria-labelledby=\"nd-step-1\" data-min=\"1\" data-max=\"12\">\n  <span id=\"nd-step-1\">Guests<\/span>\n  <div class=\"nd-step__ctrl\">\n    <button type=\"button\" data-d=\"-1\" aria-label=\"Remove a guest\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6 12h12\"/><\/svg><\/button>\n    <span class=\"nd-step__val\" aria-hidden=\"true\">2<\/span>\n    <button type=\"button\" data-d=\"1\" aria-label=\"Add a guest\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6 12h12M12 6v12\"/><\/svg><\/button>\n  <\/div>\n  <span class=\"nd-step__live\" aria-live=\"polite\"><\/span>\n<\/div>\n\n<style>\n.nd-step { --a: var(--nd-accent, #2f54eb); display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 260px; max-width: 100%; }\n.nd-step__ctrl { display: flex; align-items: center; gap: 6px; }\n.nd-step button {\n  display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--nd-line, #d6dae0);\n  border-radius: 999px; background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); cursor: pointer;\n  -webkit-tap-highlight-color: transparent;\n  transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .2s, border-color .2s;\n}\n.nd-step button:hover { border-color: var(--nd-ink, #121418); }\n.nd-step button:active { transform: scale(.9); transition-duration: .12s, .2s, .2s; }\n.nd-step button[aria-disabled=\"true\"] { opacity: .4; }\n.nd-step button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }\n.nd-step svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }\n.nd-step__val { display: inline-flex; justify-content: center; min-width: 2.4ch; font-size: 22px; font-weight: 600; line-height: 1.3; font-variant-numeric: tabular-nums; }\n.nd-step__d { position: relative; display: inline-block; height: 1.3em; overflow: hidden; }\n.nd-step__d > span { display: block; }\n.nd-step__d .is-in { animation: nd-roll-in .3s cubic-bezier(.2,.8,.2,1) both; }\n.nd-step__d .is-out { position: absolute; inset: 0; animation: nd-roll-out .3s cubic-bezier(.2,.8,.2,1) both; }\n.nd-step__live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }\n@keyframes nd-roll-in { from { transform: translateY(calc(var(--dir) * 100%)); } }\n@keyframes nd-roll-out { to { transform: translateY(calc(var(--dir) * -100%)); } }\n@media (prefers-reduced-motion: reduce) { .nd-step__d .is-in { animation: none; } .nd-step__d .is-out { display: none; } .nd-step button { transition: none; } }\n<\/style>\n\n<script>\n(function(){\n    document.querySelectorAll('.nd-step:not([data-nd])').forEach(function (s) {\n      s.setAttribute('data-nd', '');\n      var val = s.querySelector('.nd-step__val'), live = s.querySelector('.nd-step__live');\n      var label = s.getAttribute('aria-labelledby') ? document.getElementById(s.getAttribute('aria-labelledby')).textContent : 'Value';\n      var min = +(s.dataset.min || 0), max = +(s.dataset.max || 99), n = parseInt(val.textContent, 10) || 0;\n      var still = matchMedia('(prefers-reduced-motion: reduce)'), btns = s.querySelectorAll('button[data-d]');\n      function draw(old, dir) { // roll only the digits that changed\n        var len = Math.max(String(old).length, String(n).length), a = String(old).padStart(len), b = String(n).padStart(len);\n        val.textContent = '';\n        for (var k = 0; k < len; k++) {\n          var col = document.createElement('span'), inn = document.createElement('span');\n          col.className = 'nd-step__d';\n          inn.textContent = b[k].trim();\n          if (dir && a[k] !== b[k] && !still.matches) {\n            var out = document.createElement('span');\n            out.className = 'is-out'; out.textContent = a[k].trim(); inn.className = 'is-in';\n            col.style.setProperty('--dir', dir);\n            col.appendChild(out);\n            out.addEventListener('animationend', function () { this.remove(); });\n          }\n          col.appendChild(inn);\n          val.appendChild(col);\n        }\n      }\n      function sync() { btns.forEach(function (b) { b.setAttribute('aria-disabled', String(+b.dataset.d < 0 ? n <= min : n >= max)); }); }\n      btns.forEach(function (b) {\n        b.addEventListener('click', function () {\n          var d = +b.dataset.d, next = n + d;\n          if (next < min || next > max) { // bump against the wall\n            if (!still.matches && val.animate) val.animate([{ transform: 'none' }, { transform: 'translateY(' + (-d * 5) + 'px)' }, { transform: 'none' }], { duration: 240, easing: 'cubic-bezier(.2,.8,.2,1)' });\n            live.textContent = (d > 0 ? 'Maximum is ' : 'Minimum is ') + (d > 0 ? max : min);\n            return;\n          }\n          var old = n; n = next;\n          draw(old, d); sync();\n          live.textContent = label + ': ' + n;\n        });\n      });\n      draw(n, 0); sync();\n    });\n  })();\n<\/script>\n"};
+document.querySelectorAll('.card').forEach(function (card) {
+  var id = card.id, copy = card.querySelector('.copy'), lbl = copy.querySelector('.lbl'),
+      pre = card.querySelector('pre.code'), view = card.querySelector('.view'), timer;
+  pre.textContent = CODES[id];
+  function show(open) { pre.hidden = !open; view.setAttribute('aria-expanded', String(open)); view.textContent = open ? 'Hide code' : 'View code'; }
+  copy.addEventListener('click', function () {
+    function done() {
+      copy.classList.add('copied'); lbl.textContent = 'Copied'; clearTimeout(timer);
+      timer = setTimeout(function () { copy.classList.remove('copied'); lbl.textContent = 'Copy code'; }, 1800);
+    }
+    function fallback() {
+      show(true);
+      var r = document.createRange(); r.selectNodeContents(pre);
+      var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      lbl.textContent = 'Selected. Press ⌘C';
+    }
+    try { navigator.clipboard.writeText(CODES[id]).then(done, fallback); } catch (e) { fallback(); }
+  });
+  view.addEventListener('click', function () { show(pre.hidden); });
+});
+var fail = document.getElementById('fail-next');
+if (fail) fail.addEventListener('change', function () { document.querySelector('#button .nd-btn').dataset.fail = String(fail.checked); });
+</script>
+<script>
+/* ---- components (generated from components/*.html) ---- */
+
+(function(){
+    document.querySelectorAll('.nd-switch:not([data-nd])').forEach(function (s) {
+      s.setAttribute('data-nd', '');
+      s.addEventListener('click', function () {
+        s.setAttribute('aria-checked', s.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
+      });
+    });
+  })();
+
+
+(function(){
+    document.querySelectorAll('.nd-btn:not([data-nd])').forEach(function (b) {
+      b.setAttribute('data-nd', '');
+      var status = b.parentNode.querySelector('.nd-btn__status');
+      // Replace task() with your real request. Resolve = saved, reject = failed.
+      function task() {
+        return new Promise(function (ok, fail) { setTimeout(b.dataset.fail === 'true' ? fail : ok, 1200); });
+      }
+      b.addEventListener('click', function () {
+        if (b.dataset.state !== 'idle') return;
+        var w = b.offsetWidth;
+        b.style.width = w + 'px';
+        void b.offsetWidth;
+        b.dataset.state = 'loading';
+        b.setAttribute('aria-busy', 'true');
+        b.style.width = b.offsetHeight + 'px';
+        if (status) { status.textContent = ''; status.classList.remove('is-bad'); }
+        task().then(function () { return 'done'; }, function () { return 'error'; }).then(function (r) {
+          b.dataset.state = r;
+          b.removeAttribute('aria-busy');
+          if (status) {
+            status.textContent = r === 'done' ? 'Saved' : 'Couldn’t save. Try again.';
+            status.classList.toggle('is-bad', r === 'error');
+          }
+          setTimeout(function () {
+            b.style.width = w + 'px';
+            b.dataset.state = 'idle';
+            setTimeout(function () { b.style.width = ''; }, 360);
+          }, r === 'done' ? 900 : 1300);
+        });
+      });
+    });
+  })();
+
+
+(function(){
+    document.querySelectorAll('.nd-tabs:not([data-nd])').forEach(function (root) {
+      root.setAttribute('data-nd', '');
+      var list = root.querySelector('[role="tablist"]'), ink = root.querySelector('.nd-tabs__ink');
+      var tabs = [].slice.call(list.querySelectorAll('[role="tab"]'));
+      var cur = Math.max(0, tabs.findIndex(function (t) { return t.getAttribute('aria-selected') === 'true'; }));
+      var e = 'cubic-bezier(.2,.8,.2,1)';
+      function place(dir) {
+        var t = tabs[cur], l = t.offsetLeft, r = list.scrollWidth - l - t.offsetWidth;
+        // the edge you are moving toward leaves first; the other follows 90ms later
+        ink.style.transition = !dir ? 'none'
+          : dir > 0 ? 'right .24s ' + e + ', left .24s ' + e + ' .09s'
+          : 'left .24s ' + e + ', right .24s ' + e + ' .09s';
+        ink.style.left = l + 'px';
+        ink.style.right = r + 'px';
+      }
+      function select(i, focus) {
+        if (i === cur) return;
+        var dir = i > cur ? 1 : -1;
+        tabs.forEach(function (t, j) {
+          var on = j === i, p = document.getElementById(t.getAttribute('aria-controls'));
+          t.setAttribute('aria-selected', String(on));
+          t.tabIndex = on ? 0 : -1;
+          if (p) { p.hidden = !on; if (on) p.style.setProperty('--nd-dx', dir * 10 + 'px'); }
+        });
+        cur = i;
+        if (focus) tabs[i].focus();
+        place(dir);
+      }
+      tabs.forEach(function (t, i) { t.addEventListener('click', function () { select(i); }); });
+      list.addEventListener('keydown', function (ev) {
+        var n = tabs.length, k = ev.key;
+        var i = k === 'ArrowRight' ? (cur + 1) % n : k === 'ArrowLeft' ? (cur - 1 + n) % n : k === 'Home' ? 0 : k === 'End' ? n - 1 : -1;
+        if (i < 0) return;
+        ev.preventDefault();
+        select(i, true);
+      });
+      place(0);
+      addEventListener('resize', function () { place(0); });
+      if (document.fonts) document.fonts.ready.then(function () { place(0); });
+    });
+  })();
+
+
+(function(){
+    document.querySelectorAll('.nd-tip:not([data-nd])').forEach(function (g) {
+      g.setAttribute('data-nd', '');
+      var tip = g.querySelector('.nd-tip__bubble'), txt = tip.querySelector('.nd-tip__text'), kbd = tip.querySelector('kbd');
+      var warm = false, showT, hideT, coolT;
+      function move(b) {
+        txt.textContent = b.getAttribute('aria-label');
+        kbd.textContent = b.dataset.key || '';
+        kbd.hidden = !b.dataset.key;
+        tip.style.left = (b.offsetLeft + b.offsetWidth / 2) + 'px';
+      }
+      function show(b, now) {
+        clearTimeout(hideT); clearTimeout(coolT); clearTimeout(showT);
+        if (warm) { move(b); tip.classList.add('is-on'); return; } // already warm: glide
+        showT = setTimeout(function () {
+          tip.classList.add('no-glide'); move(b); void tip.offsetWidth; tip.classList.remove('no-glide');
+          tip.classList.add('is-on'); warm = true;
+        }, now ? 0 : 500);
+      }
+      function hide() {
+        clearTimeout(showT);
+        hideT = setTimeout(function () {
+          tip.classList.remove('is-on');
+          coolT = setTimeout(function () { warm = false; }, 600);
+        }, 200);
+      }
+      g.querySelectorAll('button[aria-label]').forEach(function (b) {
+        b.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') show(b); });
+        b.addEventListener('pointerleave', hide);
+        b.addEventListener('focus', function () { if (b.matches(':focus-visible')) show(b, true); });
+        b.addEventListener('blur', hide);
+        b.addEventListener('click', function () {
+          if (b.hasAttribute('aria-pressed')) b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
+        });
+      });
+      tip.addEventListener('pointerenter', function () { clearTimeout(hideT); });
+      tip.addEventListener('pointerleave', hide);
+      document.addEventListener('keydown', function (e) { // Escape closes it wherever focus is (WCAG 1.4.13)
+        if (e.key === 'Escape' && (tip.classList.contains('is-on') || showT)) { clearTimeout(showT); showT = 0; tip.classList.remove('is-on'); warm = false; }
+      });
+    });
+  })();
+
+
+(function(){
+    var region = document.querySelector('.nd-toasts');
+    if (!region || region.hasAttribute('data-nd')) return;
+    region.setAttribute('data-nd', '');
+    function layout() {
+      [].slice.call(region.querySelectorAll('.nd-toast:not(.is-out)')).reverse().forEach(function (t, i) {
+        t.style.setProperty('--i', i);
+        t.classList.toggle('is-hidden', i > 2);
+      });
+    }
+    function dismiss(t, dir) {
+      if (t.classList.contains('is-out')) return;
+      t.style.setProperty('--sx', dir || 1);
+      t.classList.add('is-out');
+      layout();
+      setTimeout(function () { t.remove(); }, 340);
+    }
+    window.ndToast = function (text) {
+      var t = document.createElement('li');
+      t.className = 'nd-toast';
+      t.innerHTML = '<span class="nd-toast__dot" aria-hidden="true"></span><span class="nd-toast__text"></span>' +
+        '<button type="button" class="nd-toast__close" aria-label="Dismiss">×</button><span class="nd-toast__bar" aria-hidden="true"></span>';
+      t.querySelector('.nd-toast__text').textContent = text;
+      t.querySelector('.nd-toast__close').addEventListener('click', function () { dismiss(t); });
+      t.querySelector('.nd-toast__bar').addEventListener('animationend', function () { dismiss(t); });
+      var x0 = null, dx = 0; // swipe to dismiss
+      t.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('button')) return;
+        x0 = e.clientX; dx = 0; t.setPointerCapture(e.pointerId); t.style.transition = 'none';
+      });
+      t.addEventListener('pointermove', function (e) { if (x0 !== null) { dx = e.clientX - x0; t.style.translate = dx + 'px 0'; } });
+      function end() {
+        if (x0 === null) return;
+        x0 = null; t.style.transition = ''; t.style.translate = '';
+        if (Math.abs(dx) > 70) dismiss(t, dx > 0 ? 1 : -1);
+      }
+      t.addEventListener('pointerup', end);
+      t.addEventListener('pointercancel', end);
+      region.appendChild(t);
+      var live = region.querySelectorAll('.nd-toast:not(.is-out)');
+      if (live.length > 5) dismiss(live[0]);
+      layout();
+    };
+    document.querySelectorAll('.nd-toast-trigger').forEach(function (b) {
+      var msgs = (b.dataset.toast || 'Done').split('|'), n = 0;
+      b.addEventListener('click', function () { window.ndToast(msgs[n++ % msgs.length]); });
+    });
+  })();
+
+
+(function(){
+    document.querySelectorAll('.nd-range:not([data-nd])').forEach(function (r) {
+      r.setAttribute('data-nd', '');
+      var i = r.querySelector('input'), bub = r.querySelector('.nd-range__bubble'), val = r.querySelector('.nd-range__val');
+      var still = matchMedia('(prefers-reduced-motion: reduce)');
+      var last = +i.value, lastT = performance.now(), push = 0, ang = 0, raf = 0;
+      function paint() {
+        var min = +i.min || 0, max = +i.max || 100;
+        r.style.setProperty('--f', (i.value - min) / (max - min));
+        bub.textContent = i.value;
+        if (val) val.textContent = i.value;
+      }
+      function tick() { // a damped spring back to upright
+        push *= .82;
+        ang += (push - ang) * .25;
+        r.style.setProperty('--tilt', ang.toFixed(2) + 'deg');
+        if (Math.abs(ang) > .05 || Math.abs(push) > .05) raf = requestAnimationFrame(tick);
+        else { raf = 0; r.style.setProperty('--tilt', '0deg'); }
+      }
+      i.addEventListener('input', function () {
+        var now = performance.now(), dt = Math.max(8, now - lastT), range = (+i.max || 100) - (+i.min || 0);
+        var vel = (i.value - last) / range * 100 / dt;
+        last = +i.value; lastT = now;
+        paint();
+        if (still.matches) return;
+        push = Math.max(-22, Math.min(22, -vel * 70));
+        if (!raf) raf = requestAnimationFrame(tick);
+      });
+      var kb = 0, pointer = false;
+      i.addEventListener('keydown', function () { // keyboard users see the bubble while they change the value
+        if (pointer) return;
+        r.classList.add('is-active'); clearTimeout(kb);
+        kb = setTimeout(function () { r.classList.remove('is-active'); }, 900);
+      });
+      i.addEventListener('pointerdown', function () { pointer = true; clearTimeout(kb); r.classList.add('is-active'); });
+      ['pointerup', 'pointercancel'].forEach(function (ev) { addEventListener(ev, function () { if (pointer) { pointer = false; r.classList.remove('is-active'); } }); });
+      paint();
+    });
+  })();
+
+
+(function(){
+    document.querySelectorAll('.nd-field:not([data-nd])').forEach(function (f) {
+      f.setAttribute('data-nd', '');
+      var i = f.querySelector('input'), msg = f.querySelector('.nd-field__msg'), cnt = f.querySelector('.nd-field__count');
+      var ok = new RegExp('^' + (i.dataset.allow || '.') + '*$'), hint = msg.textContent, prev = i.value, t = 0, lastShake = 0;
+      function count() {
+        var m = i.maxLength > 0 ? i.maxLength : 0;
+        if (cnt) cnt.textContent = i.value.length + (m ? '/' + m : '');
+        f.classList.toggle('is-near', !!m && i.value.length >= m - 3);
+      }
+      i.addEventListener('input', function () {
+        if (!ok.test(i.value)) {
+          var pos = Math.max(0, i.selectionStart - (i.value.length - prev.length));
+          i.value = prev;
+          i.setSelectionRange(pos, pos);
+          f.classList.add('is-bad');
+          msg.textContent = i.dataset.error || hint;
+          var now = Date.now();
+          if (now - lastShake > 400) { // one shake at a time, even for fast typists
+            lastShake = now;
+            f.classList.remove('is-shake'); void f.offsetWidth; f.classList.add('is-shake');
+          }
+          clearTimeout(t);
+          t = setTimeout(function () { f.classList.remove('is-bad'); msg.textContent = hint; }, 2200);
+        } else prev = i.value;
+        count();
+      });
+      f.addEventListener('animationend', function () { f.classList.remove('is-shake'); });
+      count();
+    });
+  })();
+
+
+(function(){
+    document.querySelectorAll('.nd-acc:not([data-nd])').forEach(function (a) {
+      a.setAttribute('data-nd', '');
+      a.querySelectorAll('.nd-acc__h button').forEach(function (b) {
+        var p = document.getElementById(b.getAttribute('aria-controls'));
+        p.querySelectorAll('.nd-acc__inner > *').forEach(function (c, n) { c.style.setProperty('--n', n); });
+        b.addEventListener('click', function () {
+          var open = b.getAttribute('aria-expanded') !== 'true';
+          b.setAttribute('aria-expanded', String(open));
+          p.toggleAttribute('data-open', open);
+        });
+      });
+    });
+  })();
+
+
+(function(){
+    document.querySelectorAll('.nd-step:not([data-nd])').forEach(function (s) {
+      s.setAttribute('data-nd', '');
+      var val = s.querySelector('.nd-step__val'), live = s.querySelector('.nd-step__live');
+      var label = s.getAttribute('aria-labelledby') ? document.getElementById(s.getAttribute('aria-labelledby')).textContent : 'Value';
+      var min = +(s.dataset.min || 0), max = +(s.dataset.max || 99), n = parseInt(val.textContent, 10) || 0;
+      var still = matchMedia('(prefers-reduced-motion: reduce)'), btns = s.querySelectorAll('button[data-d]');
+      function draw(old, dir) { // roll only the digits that changed
+        var len = Math.max(String(old).length, String(n).length), a = String(old).padStart(len), b = String(n).padStart(len);
+        val.textContent = '';
+        for (var k = 0; k < len; k++) {
+          var col = document.createElement('span'), inn = document.createElement('span');
+          col.className = 'nd-step__d';
+          inn.textContent = b[k].trim();
+          if (dir && a[k] !== b[k] && !still.matches) {
+            var out = document.createElement('span');
+            out.className = 'is-out'; out.textContent = a[k].trim(); inn.className = 'is-in';
+            col.style.setProperty('--dir', dir);
+            col.appendChild(out);
+            out.addEventListener('animationend', function () { this.remove(); });
+          }
+          col.appendChild(inn);
+          val.appendChild(col);
+        }
+      }
+      function sync() { btns.forEach(function (b) { b.setAttribute('aria-disabled', String(+b.dataset.d < 0 ? n <= min : n >= max)); }); }
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var d = +b.dataset.d, next = n + d;
+          if (next < min || next > max) { // bump against the wall
+            if (!still.matches && val.animate) val.animate([{ transform: 'none' }, { transform: 'translateY(' + (-d * 5) + 'px)' }, { transform: 'none' }], { duration: 240, easing: 'cubic-bezier(.2,.8,.2,1)' });
+            live.textContent = (d > 0 ? 'Maximum is ' : 'Minimum is ') + (d > 0 ? max : min);
+            return;
+          }
+          var old = n; n = next;
+          draw(old, d); sync();
+          live.textContent = label + ': ' + n;
+        });
+      });
+      draw(n, 0); sync();
+    });
+  })();
+
+
+</script>

@@ -1,0 +1,74 @@
+<!-- Nudge · Text field · v0 -->
+<div class="nd-field">
+  <div class="nd-field__box">
+    <input id="nd-field-1" type="text" placeholder=" " maxlength="20" autocomplete="off" spellcheck="false"
+      data-allow="[A-Za-z0-9.]" data-error="Only letters, numbers and dots." aria-describedby="nd-field-1-msg">
+    <label for="nd-field-1">Username</label>
+  </div>
+  <div class="nd-field__foot">
+    <span id="nd-field-1-msg" class="nd-field__msg" aria-live="polite">Letters, numbers and dots.</span>
+    <span class="nd-field__count" aria-hidden="true">0/20</span>
+  </div>
+</div>
+
+<style>
+.nd-field { --a: var(--nd-accent, #2f54eb); --bad: var(--nd-danger, #d92d20); width: 300px; max-width: 100%; }
+.nd-field__box { position: relative; }
+.nd-field input {
+  display: block; width: 100%; box-sizing: border-box; height: 56px; padding: 22px 14px 6px;
+  border: 1.5px solid var(--nd-line, #c9ced6); border-radius: 12px; outline: 0;
+  background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); font: inherit; font-size: 16px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.nd-field input:focus { border-color: var(--a); box-shadow: 0 0 0 4px color-mix(in srgb, var(--a) 20%, transparent); }
+.nd-field label {
+  position: absolute; left: 15px; top: 18px; color: var(--nd-sub, #5a606c); font-size: 16px; line-height: 20px;
+  pointer-events: none; transform-origin: 0 0; transition: transform .2s cubic-bezier(.2,.8,.2,1), color .2s;
+}
+.nd-field input:focus + label, .nd-field input:not(:placeholder-shown) + label { transform: translateY(-10px) scale(.75); }
+.nd-field input:focus + label { color: var(--a); }
+.nd-field__foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 6px; font-size: 13px; color: var(--nd-sub, #5a606c); }
+.nd-field__msg { transition: color .2s; }
+.nd-field__count { font-variant-numeric: tabular-nums; transition: color .2s; }
+.nd-field.is-near .nd-field__count { color: var(--nd-ink, #121418); font-weight: 600; }
+.nd-field.is-bad input, .nd-field.is-bad input:focus { border-color: var(--bad); box-shadow: 0 0 0 4px color-mix(in srgb, var(--bad) 18%, transparent); }
+.nd-field.is-bad label { color: var(--bad); }
+.nd-field.is-bad .nd-field__msg { color: var(--bad); }
+.nd-field.is-shake .nd-field__box { animation: nd-shake .4s cubic-bezier(.36,.07,.19,.97); }
+@keyframes nd-shake { 20% { transform: translateX(-5px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-2.5px); } 80% { transform: translateX(1px); } }
+@media (prefers-reduced-motion: reduce) { .nd-field.is-shake .nd-field__box { animation: none; } .nd-field label { transition: color .2s; } }
+</style>
+
+<script>
+(function(){
+    document.querySelectorAll('.nd-field:not([data-nd])').forEach(function (f) {
+      f.setAttribute('data-nd', '');
+      var i = f.querySelector('input'), msg = f.querySelector('.nd-field__msg'), cnt = f.querySelector('.nd-field__count');
+      var ok = new RegExp('^' + (i.dataset.allow || '.') + '*$'), hint = msg.textContent, prev = i.value, t = 0, lastShake = 0;
+      function count() {
+        var m = i.maxLength > 0 ? i.maxLength : 0;
+        if (cnt) cnt.textContent = i.value.length + (m ? '/' + m : '');
+        f.classList.toggle('is-near', !!m && i.value.length >= m - 3);
+      }
+      i.addEventListener('input', function () {
+        if (!ok.test(i.value)) {
+          var pos = Math.max(0, i.selectionStart - (i.value.length - prev.length));
+          i.value = prev;
+          i.setSelectionRange(pos, pos);
+          f.classList.add('is-bad');
+          msg.textContent = i.dataset.error || hint;
+          var now = Date.now();
+          if (now - lastShake > 400) { // one shake at a time, even for fast typists
+            lastShake = now;
+            f.classList.remove('is-shake'); void f.offsetWidth; f.classList.add('is-shake');
+          }
+          clearTimeout(t);
+          t = setTimeout(function () { f.classList.remove('is-bad'); msg.textContent = hint; }, 2200);
+        } else prev = i.value;
+        count();
+      });
+      f.addEventListener('animationend', function () { f.classList.remove('is-shake'); });
+      count();
+    });
+  })();
+</script>

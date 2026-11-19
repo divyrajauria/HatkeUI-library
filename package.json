@@ -1,0 +1,7 @@
+{
+  "name": "nudge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Everyday UI components with considered micro-interactions. Copy, paste, done.",
+  "scripts": { "build": "node build.js" }
+}

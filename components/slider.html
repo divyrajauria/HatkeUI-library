@@ -1,0 +1,90 @@
+<!-- Nudge · Slider · v0 -->
+<div class="nd-range">
+  <div class="nd-range__head"><label for="nd-range-1">Volume</label><span class="nd-range__val" aria-hidden="true">40</span></div>
+  <div class="nd-range__track">
+    <input id="nd-range-1" type="range" min="0" max="100" value="40">
+    <output class="nd-range__bubble" for="nd-range-1" aria-hidden="true">40</output>
+  </div>
+</div>
+
+<style>
+.nd-range { --a: var(--nd-accent, #2f54eb); --off: var(--nd-muted, #dde1e7); --f: .4; --tilt: 0deg; width: 280px; max-width: 100%; }
+.nd-range__head { display: flex; justify-content: space-between; font-size: 14px; color: var(--nd-sub, #5a606c); }
+.nd-range__val { color: var(--nd-ink, #121418); font-variant-numeric: tabular-nums; }
+.nd-range__track { position: relative; }
+.nd-range input { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 44px; margin: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.nd-range input:focus { outline: none; }
+.nd-range input::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: linear-gradient(to right, var(--a) calc(11px + var(--f) * (100% - 22px)), var(--off) 0); }
+.nd-range input::-moz-range-track { height: 6px; border-radius: 999px; background: var(--off); }
+.nd-range input::-moz-range-progress { height: 6px; border-radius: 999px; background: var(--a); }
+.nd-range input::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 22px; height: 22px; margin-top: -8px; border: 0; border-radius: 50%;
+  background: var(--nd-knob, #fff); box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.22);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.nd-range input::-moz-range-thumb {
+  width: 22px; height: 22px; border: 0; border-radius: 50%;
+  background: var(--nd-knob, #fff); box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.22);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.nd-range input:active::-webkit-slider-thumb { transform: scale(1.25); }
+.nd-range input:active::-moz-range-thumb { transform: scale(1.25); }
+.nd-range input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--nd-paper, #fff), 0 0 0 5px var(--a); }
+.nd-range input:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--nd-paper, #fff), 0 0 0 5px var(--a); }
+.nd-range__bubble {
+  position: absolute; bottom: calc(100% - 6px); left: calc(11px + var(--f) * (100% - 22px));
+  min-width: 36px; padding: 4px 8px; border-radius: 8px; box-sizing: border-box;
+  background: var(--nd-ink, #121418); color: var(--nd-paper, #fff); font-size: 13px; text-align: center;
+  font-variant-numeric: tabular-nums; pointer-events: none; opacity: 0;
+  transform-origin: 50% calc(100% + 16px); transform: translateX(-50%) rotate(var(--tilt)) scale(.6);
+  transition: opacity .16s, transform .12s cubic-bezier(.2,.8,.2,1);
+}
+.nd-range.is-active .nd-range__bubble, .nd-range input:focus-visible + .nd-range__bubble { opacity: 1; transform: translateX(-50%) rotate(var(--tilt)); }
+@media (prefers-reduced-motion: reduce) {
+  .nd-range input::-webkit-slider-thumb { transition: none; }
+  .nd-range input::-moz-range-thumb { transition: none; }
+  .nd-range__bubble { transition: opacity .16s; }
+}
+</style>
+
+<script>
+(function(){
+    document.querySelectorAll('.nd-range:not([data-nd])').forEach(function (r) {
+      r.setAttribute('data-nd', '');
+      var i = r.querySelector('input'), bub = r.querySelector('.nd-range__bubble'), val = r.querySelector('.nd-range__val');
+      var still = matchMedia('(prefers-reduced-motion: reduce)');
+      var last = +i.value, lastT = performance.now(), push = 0, ang = 0, raf = 0;
+      function paint() {
+        var min = +i.min || 0, max = +i.max || 100;
+        r.style.setProperty('--f', (i.value - min) / (max - min));
+        bub.textContent = i.value;
+        if (val) val.textContent = i.value;
+      }
+      function tick() { // a damped spring back to upright
+        push *= .82;
+        ang += (push - ang) * .25;
+        r.style.setProperty('--tilt', ang.toFixed(2) + 'deg');
+        if (Math.abs(ang) > .05 || Math.abs(push) > .05) raf = requestAnimationFrame(tick);
+        else { raf = 0; r.style.setProperty('--tilt', '0deg'); }
+      }
+      i.addEventListener('input', function () {
+        var now = performance.now(), dt = Math.max(8, now - lastT), range = (+i.max || 100) - (+i.min || 0);
+        var vel = (i.value - last) / range * 100 / dt;
+        last = +i.value; lastT = now;
+        paint();
+        if (still.matches) return;
+        push = Math.max(-22, Math.min(22, -vel * 70));
+        if (!raf) raf = requestAnimationFrame(tick);
+      });
+      var kb = 0, pointer = false;
+      i.addEventListener('keydown', function () { // keyboard users see the bubble while they change the value
+        if (pointer) return;
+        r.classList.add('is-active'); clearTimeout(kb);
+        kb = setTimeout(function () { r.classList.remove('is-active'); }, 900);
+      });
+      i.addEventListener('pointerdown', function () { pointer = true; clearTimeout(kb); r.classList.add('is-active'); });
+      ['pointerup', 'pointercancel'].forEach(function (ev) { addEventListener(ev, function () { if (pointer) { pointer = false; r.classList.remove('is-active'); } }); });
+      paint();
+    });
+  })();
+</script>

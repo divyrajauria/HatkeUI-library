@@ -1,0 +1,210 @@
+[
+  {
+    "id": "toggle",
+    "name": "Toggle",
+    "idea": "<b>Ink trail.</b> The knob stretches when you press it, overshoots a little, and leaves the colour behind it as it travels.",
+    "ms": "360",
+    "ease": [
+      0.34,
+      1.56,
+      0.64,
+      1
+    ],
+    "states": [
+      "off",
+      "on",
+      "pressed",
+      "focus",
+      "reduced motion"
+    ],
+    "extra": ""
+  },
+  {
+    "id": "checkbox",
+    "name": "Checkbox",
+    "idea": "<b>Pen stroke.</b> The box squeezes when pressed and springs back filled. Then the check is drawn in, the way you would write it.",
+    "ms": "300",
+    "ease": [
+      0.2,
+      0.8,
+      0.2,
+      1
+    ],
+    "states": [
+      "unchecked",
+      "checked",
+      "pressed",
+      "focus",
+      "reduced motion"
+    ],
+    "extra": ""
+  },
+  {
+    "id": "button",
+    "name": "Button",
+    "idea": "<b>Fold to a pulse.</b> The button folds into a circle while it works, then opens back up. A check means saved. A shake means it failed.",
+    "ms": "340",
+    "ease": [
+      0.2,
+      0.8,
+      0.2,
+      1
+    ],
+    "states": [
+      "idle",
+      "pressed",
+      "loading",
+      "success",
+      "error",
+      "focus",
+      "reduced motion"
+    ],
+    "extra": "<label class=\"demo-opt\"><input type=\"checkbox\" id=\"fail-next\"> Make the next save fail</label>"
+  },
+  {
+    "id": "tabs",
+    "name": "Tabs",
+    "idea": "<b>Inchworm.</b> The underline's leading edge leaves first and the trailing edge follows. The panel slides in from the side you moved toward.",
+    "ms": "240 + 90",
+    "ease": [
+      0.2,
+      0.8,
+      0.2,
+      1
+    ],
+    "states": [
+      "selected",
+      "hover",
+      "focus",
+      "arrow keys",
+      "reduced motion"
+    ],
+    "extra": ""
+  },
+  {
+    "id": "tooltip",
+    "name": "Tooltip",
+    "idea": "<b>One tooltip that travels.</b> The first one waits half a second. After that, the same bubble glides straight to the next button with no wait.",
+    "ms": "500 delay, then 200",
+    "ease": [
+      0.2,
+      0.8,
+      0.2,
+      1
+    ],
+    "states": [
+      "cold",
+      "warm",
+      "keyboard focus",
+      "Escape",
+      "hoverable",
+      "reduced motion"
+    ],
+    "extra": ""
+  },
+  {
+    "id": "toasts",
+    "name": "Toast stack",
+    "idea": "<b>A deck you can read.</b> New toasts land on top of the stack. Hover or focus fans them out and pauses every timer. Each toast shows its time running out, and you can swipe one away.",
+    "ms": "340",
+    "ease": [
+      0.2,
+      0.8,
+      0.2,
+      1
+    ],
+    "states": [
+      "empty",
+      "one",
+      "stacked",
+      "expanded",
+      "paused",
+      "swipe",
+      "reduced motion"
+    ],
+    "extra": ""
+  },
+  {
+    "id": "slider",
+    "name": "Slider",
+    "idea": "<b>A bubble with weight.</b> The value bubble leans back against the way you drag, like something carried, and settles upright when you stop.",
+    "ms": "spring, per frame",
+    "ease": [
+      0.34,
+      1.56,
+      0.64,
+      1
+    ],
+    "states": [
+      "rest",
+      "grab",
+      "drag",
+      "keyboard",
+      "focus",
+      "reduced motion"
+    ],
+    "extra": ""
+  },
+  {
+    "id": "input",
+    "name": "Text field",
+    "idea": "<b>A head-shake for no.</b> If you type a character the field can't take, it refuses it on the spot. The field gives a small dampened shake and the rule below turns red.",
+    "ms": "400",
+    "ease": [
+      0.36,
+      0.07,
+      0.19,
+      0.97
+    ],
+    "states": [
+      "empty",
+      "focus",
+      "filled",
+      "near limit",
+      "refused",
+      "reduced motion"
+    ],
+    "extra": ""
+  },
+  {
+    "id": "accordion",
+    "name": "Accordion",
+    "idea": "<b>Unfold.</b> The panel opens on a grid track, then its lines arrive top to bottom, 45ms apart. The plus lies down into a minus.",
+    "ms": "340",
+    "ease": [
+      0.2,
+      0.8,
+      0.2,
+      1
+    ],
+    "states": [
+      "closed",
+      "open",
+      "several open",
+      "focus",
+      "reduced motion"
+    ],
+    "extra": ""
+  },
+  {
+    "id": "stepper",
+    "name": "Stepper",
+    "idea": "<b>Odometer.</b> Only the digits that change roll: up for more, down for less. At the limit, the number bumps against the wall instead of the button going dead.",
+    "ms": "300",
+    "ease": [
+      0.2,
+      0.8,
+      0.2,
+      1
+    ],
+    "states": [
+      "min",
+      "between",
+      "max",
+      "limit bump",
+      "focus",
+      "reduced motion"
+    ],
+    "extra": ""
+  }
+]

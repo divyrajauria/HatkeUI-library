@@ -1,0 +1,85 @@
+<!-- Nudge · Tooltip · v0 -->
+<div class="nd-tip" role="group" aria-label="Formatting">
+  <button type="button" aria-label="Bold" aria-pressed="false" data-key="⌘B" aria-keyshortcuts="Meta+B"><b>B</b></button>
+  <button type="button" aria-label="Italic" aria-pressed="false" data-key="⌘I" aria-keyshortcuts="Meta+I"><i>I</i></button>
+  <button type="button" aria-label="Underline" aria-pressed="false" data-key="⌘U" aria-keyshortcuts="Meta+U"><u>U</u></button>
+  <button type="button" aria-label="Strikethrough" aria-pressed="false" data-key="⇧⌘X" aria-keyshortcuts="Shift+Meta+X"><s>S</s></button>
+  <span class="nd-tip__bubble" aria-hidden="true"><span class="nd-tip__text"></span><kbd></kbd></span>
+</div>
+
+<style>
+.nd-tip {
+  --a: var(--nd-accent, #2f54eb);
+  position: relative; display: inline-flex; gap: 4px; padding: 4px;
+  border: 1px solid var(--nd-line, #d6dae0); border-radius: 14px; background: var(--nd-paper, #fff);
+}
+.nd-tip > button {
+  width: 44px; height: 44px; border: 0; border-radius: 10px; background: none; color: var(--nd-ink, #121418);
+  font: inherit; font-size: 16px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background-color .18s, color .18s, transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.nd-tip > button:hover { background: var(--nd-muted, #eceef2); }
+.nd-tip > button[aria-pressed="true"] { background: var(--nd-muted, #eceef2); color: var(--a); }
+.nd-tip > button:active { transform: scale(.9); transition-duration: .18s, .18s, .12s; }
+.nd-tip > button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }
+.nd-tip__bubble {
+  position: absolute; bottom: calc(100% + 10px); left: 0; display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: 9px; background: var(--nd-ink, #121418); color: var(--nd-paper, #fff);
+  font-size: 13px; line-height: 1.3; white-space: nowrap; pointer-events: none; opacity: 0;
+  transform: translateX(-50%) translateY(4px) scale(.94); transform-origin: 50% 100%;
+  transition: opacity .16s, transform .2s cubic-bezier(.2,.8,.2,1), left .2s cubic-bezier(.2,.8,.2,1);
+}
+.nd-tip__bubble::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border: 5px solid transparent; border-top-color: var(--nd-ink, #121418); }
+.nd-tip__bubble.is-on { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
+.nd-tip__bubble.no-glide { transition: none; }
+.nd-tip__bubble kbd { font: inherit; font-size: 12px; opacity: .6; }
+@media (prefers-reduced-motion: reduce) {
+  .nd-tip__bubble, .nd-tip__bubble.is-on { transform: translateX(-50%); transition: opacity .16s; }
+  .nd-tip > button { transition: none; }
+}
+</style>
+
+<script>
+(function(){
+    document.querySelectorAll('.nd-tip:not([data-nd])').forEach(function (g) {
+      g.setAttribute('data-nd', '');
+      var tip = g.querySelector('.nd-tip__bubble'), txt = tip.querySelector('.nd-tip__text'), kbd = tip.querySelector('kbd');
+      var warm = false, showT, hideT, coolT;
+      function move(b) {
+        txt.textContent = b.getAttribute('aria-label');
+        kbd.textContent = b.dataset.key || '';
+        kbd.hidden = !b.dataset.key;
+        tip.style.left = (b.offsetLeft + b.offsetWidth / 2) + 'px';
+      }
+      function show(b, now) {
+        clearTimeout(hideT); clearTimeout(coolT); clearTimeout(showT);
+        if (warm) { move(b); tip.classList.add('is-on'); return; } // already warm: glide
+        showT = setTimeout(function () {
+          tip.classList.add('no-glide'); move(b); void tip.offsetWidth; tip.classList.remove('no-glide');
+          tip.classList.add('is-on'); warm = true;
+        }, now ? 0 : 500);
+      }
+      function hide() {
+        clearTimeout(showT);
+        hideT = setTimeout(function () {
+          tip.classList.remove('is-on');
+          coolT = setTimeout(function () { warm = false; }, 600);
+        }, 200);
+      }
+      g.querySelectorAll('button[aria-label]').forEach(function (b) {
+        b.addEventListener('pointerenter', function (e) { if (e.pointerType !== 'touch') show(b); });
+        b.addEventListener('pointerleave', hide);
+        b.addEventListener('focus', function () { if (b.matches(':focus-visible')) show(b, true); });
+        b.addEventListener('blur', hide);
+        b.addEventListener('click', function () {
+          if (b.hasAttribute('aria-pressed')) b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
+        });
+      });
+      tip.addEventListener('pointerenter', function () { clearTimeout(hideT); });
+      tip.addEventListener('pointerleave', hide);
+      document.addEventListener('keydown', function (e) { // Escape closes it wherever focus is (WCAG 1.4.13)
+        if (e.key === 'Escape' && (tip.classList.contains('is-on') || showT)) { clearTimeout(showT); showT = 0; tip.classList.remove('is-on'); warm = false; }
+      });
+    });
+  })();
+</script>
