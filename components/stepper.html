@@ -1,44 +1,44 @@
-<!-- Nudge · Stepper · v0 -->
-<div class="nd-step" role="group" aria-labelledby="nd-step-1" data-min="1" data-max="12">
-  <span id="nd-step-1">Guests</span>
-  <div class="nd-step__ctrl">
+<!-- Hatke UI · Stepper · v0 -->
+<div class="hk-step" role="group" aria-labelledby="hk-step-1" data-min="1" data-max="12">
+  <span id="hk-step-1">Guests</span>
+  <div class="hk-step__ctrl">
     <button type="button" data-d="-1" aria-label="Remove a guest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>
-    <span class="nd-step__val" aria-hidden="true">2</span>
+    <span class="hk-step__val" aria-hidden="true">2</span>
     <button type="button" data-d="1" aria-label="Add a guest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg></button>
   </div>
-  <span class="nd-step__live" aria-live="polite"></span>
+  <span class="hk-step__live" aria-live="polite"></span>
 </div>
 
 <style>
-.nd-step { --a: var(--nd-accent, #2f54eb); display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 260px; max-width: 100%; }
-.nd-step__ctrl { display: flex; align-items: center; gap: 6px; }
-.nd-step button {
-  display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--nd-line, #d6dae0);
-  border-radius: 999px; background: var(--nd-paper, #fff); color: var(--nd-ink, #121418); cursor: pointer;
+.hk-step { --a: var(--hk-accent, #2f54eb); display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 260px; max-width: 100%; }
+.hk-step__ctrl { display: flex; align-items: center; gap: 6px; }
+.hk-step button {
+  display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--hk-line, #d6dae0);
+  border-radius: 999px; background: var(--hk-paper, #fff); color: var(--hk-ink, #121418); cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .2s, border-color .2s;
 }
-.nd-step button:hover { border-color: var(--nd-ink, #121418); }
-.nd-step button:active { transform: scale(.9); transition-duration: .12s, .2s, .2s; }
-.nd-step button[aria-disabled="true"] { opacity: .4; }
-.nd-step button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }
-.nd-step svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
-.nd-step__val { display: inline-flex; justify-content: center; min-width: 2.4ch; font-size: 22px; font-weight: 600; line-height: 1.3; font-variant-numeric: tabular-nums; }
-.nd-step__d { position: relative; display: inline-block; height: 1.3em; overflow: hidden; }
-.nd-step__d > span { display: block; }
-.nd-step__d .is-in { animation: nd-roll-in .3s cubic-bezier(.2,.8,.2,1) both; }
-.nd-step__d .is-out { position: absolute; inset: 0; animation: nd-roll-out .3s cubic-bezier(.2,.8,.2,1) both; }
-.nd-step__live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-@keyframes nd-roll-in { from { transform: translateY(calc(var(--dir) * 100%)); } }
-@keyframes nd-roll-out { to { transform: translateY(calc(var(--dir) * -100%)); } }
-@media (prefers-reduced-motion: reduce) { .nd-step__d .is-in { animation: none; } .nd-step__d .is-out { display: none; } .nd-step button { transition: none; } }
+.hk-step button:hover { border-color: var(--hk-ink, #121418); }
+.hk-step button:active { transform: scale(.9); transition-duration: .12s, .2s, .2s; }
+.hk-step button[aria-disabled="true"] { opacity: .4; }
+.hk-step button:focus-visible { outline: 2px solid var(--a); outline-offset: 2px; }
+.hk-step svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.hk-step__val { display: inline-flex; justify-content: center; min-width: 2.4ch; font-size: 22px; font-weight: 600; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.hk-step__d { position: relative; display: inline-block; height: 1.3em; overflow: hidden; }
+.hk-step__d > span { display: block; }
+.hk-step__d .is-in { animation: hk-roll-in .3s cubic-bezier(.2,.8,.2,1) both; }
+.hk-step__d .is-out { position: absolute; inset: 0; animation: hk-roll-out .3s cubic-bezier(.2,.8,.2,1) both; }
+.hk-step__live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@keyframes hk-roll-in { from { transform: translateY(calc(var(--dir) * 100%)); } }
+@keyframes hk-roll-out { to { transform: translateY(calc(var(--dir) * -100%)); } }
+@media (prefers-reduced-motion: reduce) { .hk-step__d .is-in { animation: none; } .hk-step__d .is-out { display: none; } .hk-step button { transition: none; } }
 </style>
 
 <script>
 (function(){
-    document.querySelectorAll('.nd-step:not([data-nd])').forEach(function (s) {
-      s.setAttribute('data-nd', '');
-      var val = s.querySelector('.nd-step__val'), live = s.querySelector('.nd-step__live');
+    document.querySelectorAll('.hk-step:not([data-hk])').forEach(function (s) {
+      s.setAttribute('data-hk', '');
+      var val = s.querySelector('.hk-step__val'), live = s.querySelector('.hk-step__live');
       var label = s.getAttribute('aria-labelledby') ? document.getElementById(s.getAttribute('aria-labelledby')).textContent : 'Value';
       var min = +(s.dataset.min || 0), max = +(s.dataset.max || 99), n = parseInt(val.textContent, 10) || 0;
       var still = matchMedia('(prefers-reduced-motion: reduce)'), btns = s.querySelectorAll('button[data-d]');
@@ -47,7 +47,7 @@
         val.textContent = '';
         for (var k = 0; k < len; k++) {
           var col = document.createElement('span'), inn = document.createElement('span');
-          col.className = 'nd-step__d';
+          col.className = 'hk-step__d';
           inn.textContent = b[k].trim();
           if (dir && a[k] !== b[k] && !still.matches) {
             var out = document.createElement('span');
