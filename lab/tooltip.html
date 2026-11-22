@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Balloon tooltip · Hatke UI lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* 05 Balloon tooltip */
+.balloon-bar{position:relative;display:inline-flex;gap:4px;padding:4px;margin-top:64px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.balloon-bar>button{width:44px;height:44px;border:0;border-radius:10px;background:none;font-size:16px;cursor:pointer;transition:background-color .18s,color .18s,transform .3s var(--spring)}
+.balloon-bar>button:hover{background:var(--muted)}
+.balloon-bar>button[aria-pressed="true"]{background:var(--muted);color:var(--accent)}
+.balloon-bar>button:active{transform:scale(.88);transition-duration:.18s,.18s,.12s}
+.balloon{position:absolute;bottom:100%;left:0;display:flex;flex-direction:column;align-items:center;transform-origin:50% 100%;pointer-events:none;opacity:0;will-change:transform}
+.balloon-bubble{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:12px;background:var(--ink);color:var(--surface);font-size:13px;line-height:1.3;white-space:nowrap;pointer-events:auto}
+.balloon-bubble kbd{font:inherit;font-size:12px;opacity:.6}
+.balloon-string{width:1.5px;height:14px;background:var(--ink);opacity:.5}
+</style>
+</head>
+<body class="solo">
+<main>
+<article class="card" id="tooltip">
+      <div class="card-h"><span class="no">05</span><h2>Balloon tooltip</h2><span class="was">was: travelling tooltip</span></div>
+      <div class="stage"><div class="stage-inner">
+        <div class="balloon-bar" role="group" aria-label="Formatting">
+          <button type="button" aria-label="Bold" aria-pressed="false" data-key="⌘B" aria-keyshortcuts="Meta+B"><b>B</b></button>
+          <button type="button" aria-label="Italic" aria-pressed="false" data-key="⌘I" aria-keyshortcuts="Meta+I"><i>I</i></button>
+          <button type="button" aria-label="Underline" aria-pressed="false" data-key="⌘U" aria-keyshortcuts="Meta+U"><u>U</u></button>
+          <button type="button" aria-label="Strikethrough" aria-pressed="false" data-key="⇧⌘X" aria-keyshortcuts="Shift+Meta+X"><s>S</s></button>
+          <div class="balloon" aria-hidden="true"><div class="balloon-bubble"><span class="bt"></span><kbd></kbd></div><div class="balloon-string"></div></div>
+        </div>
+      </div></div>
+      <div class="card-b">
+        <p class="idea"><b>The tooltip is a balloon on a string.</b> It pops up from the button, bobs gently, swings when it travels to the next button, and leans toward your pointer.</p>
+        <div class="try"><span>Try</span><span>hover slowly</span><span>sweep across</span><span>Tab</span><span>Esc</span></div>
+      </div>
+    </article>
+</main>
+<script src="spring.js"></script>
+<script>
+/* ---------- 05 Balloon tooltip ---------- */
+document.querySelectorAll('.balloon-bar').forEach(function(g){
+  var bal = g.querySelector('.balloon'), bt = bal.querySelector('.bt'), kbd = bal.querySelector('kbd');
+  var X = new Spring(0, 120, 11), S = new Spring(0, 320, 14), lean = new Spring(0, 60, 8);
+  var visible = false, warm = false, target = null, showT, hideT, coolT, t0 = performance.now();
+  function cx(b){ return b.offsetLeft + b.offsetWidth / 2; }
+  function render(){
+    var swing = clamp(-X.v * .032, -20, 20), bob = RM.matches ? 0 : Math.sin((performance.now() - t0) / 420) * 1.6;
+    bal.style.left = X.x.toFixed(2) + 'px';
+    bal.style.opacity = clamp(S.x * 1.6, 0, 1).toFixed(3);
+    bal.style.transform = 'translateX(-50%) translateY(' + bob.toFixed(2) + 'px) rotate(' + (swing + lean.x).toFixed(2) + 'deg) scale(' + Math.max(0, S.x).toFixed(3) + ')';
+  }
+  var L = Loop(function(dt){ var a = X.step(dt), b = S.step(dt), c = lean.step(dt); render(); return a && b && c && !visible; }, function(){ X.snap(); S.snap(); lean.snap(); render(); });
+  function point(b){ target = b; bt.textContent = b.getAttribute('aria-label'); kbd.textContent = b.dataset.key || ''; X.t = cx(b); }
+  function show(b, now){
+    clearTimeout(hideT); clearTimeout(coolT); clearTimeout(showT);
+    if (warm && visible){ point(b); L.kick(); return; }
+    showT = setTimeout(function(){ point(b); if (!visible) X.x = X.t; X.v = 0; visible = warm = true; S.t = 1; S.v = 4; L.kick(); }, now || warm ? 0 : 450);
+  }
+  function hide(){ clearTimeout(showT); hideT = setTimeout(function(){ visible = false; S.t = 0; L.kick(); coolT = setTimeout(function(){ warm = false; }, 600); }, 180); }
+  g.querySelectorAll('button[aria-label]').forEach(function(b){
+    b.addEventListener('pointerenter', function(e){ if (e.pointerType !== 'touch') show(b); });
+    b.addEventListener('pointerleave', hide);
+    b.addEventListener('focus', function(){ if (b.matches(':focus-visible')) show(b, true); });
+    b.addEventListener('blur', hide);
+    b.addEventListener('click', function(){ b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true')); if (visible){ S.v = -3; L.kick(); } });
+  });
+  g.addEventListener('pointermove', function(e){ if (!target || RM.matches) return; var r = g.getBoundingClientRect(); lean.t = clamp((e.clientX - r.left - cx(target)) * .35, -12, 12); L.kick(); });
+  g.addEventListener('pointerleave', function(){ lean.t = 0; L.kick(); });
+  bal.addEventListener('pointerenter', function(){ clearTimeout(hideT); });
+  bal.addEventListener('pointerleave', hide);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && (visible || showT)){ clearTimeout(showT); visible = warm = false; S.t = 0; L.kick(); } });
+});
+</script>
+</body>
+</html>
