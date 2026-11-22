@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spring drawers · Hatke UI lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* 09 Spring drawers */
+.drawers{width:380px;max-width:100%;border-top:1px solid var(--line)}
+.drawer{border-bottom:1px solid var(--line)}
+.drawer h3{margin:0;font:inherit}
+.drawer h3 button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;min-height:52px;padding:0 2px;border:0;background:none;font-weight:600;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.drawer h3 button:focus-visible{outline-offset:2px;border-radius:6px}
+.drawer-icon{position:relative;flex:none;width:16px;height:16px}
+.drawer-icon::before,.drawer-icon::after{content:"";position:absolute;left:0;top:7px;width:16px;height:2px;border-radius:2px;background:currentColor}
+.drawer-icon::after{transform:rotate(90deg)}
+.drawer-panel{height:0;overflow:hidden}
+.drawer-inner{padding-bottom:16px;color:var(--sub)}
+.drawer-inner p+p{margin-top:8px}
+</style>
+</head>
+<body class="solo">
+<main>
+<article class="card" id="accordion">
+      <div class="card-h"><span class="no">09</span><h2>Spring drawers</h2><span class="was">was: unfold</span></div>
+      <div class="stage"><div class="stage-inner">
+        <div class="drawers">
+          <div class="drawer"><h3><button type="button" id="db1" aria-expanded="false" aria-controls="dp1">Can I change the colours?<span class="drawer-icon" aria-hidden="true"></span></button></h3>
+            <div class="drawer-panel" id="dp1" role="region" aria-labelledby="db1"><div class="drawer-inner"><p>Yes. Every component reads a few CSS variables, such as --hk-accent.</p><p>Set them once and every component follows.</p></div></div></div>
+          <div class="drawer"><h3><button type="button" id="db2" aria-expanded="false" aria-controls="dp2">What happens with reduced motion?<span class="drawer-icon" aria-hidden="true"></span></button></h3>
+            <div class="drawer-panel" id="dp2" role="region" aria-labelledby="db2"><div class="drawer-inner"><p>Everything still opens, closes and changes. The springs, wobble and bounce are switched off.</p></div></div></div>
+          <div class="drawer"><h3><button type="button" id="db3" aria-expanded="false" aria-controls="dp3">Do I need a framework?<span class="drawer-icon" aria-hidden="true"></span></button></h3>
+            <div class="drawer-panel" id="dp3" role="region" aria-labelledby="db3"><div class="drawer-inner"><p>The library will ship as React and Tailwind. This lab is the playground where the motion is decided first.</p></div></div></div>
+        </div>
+      </div></div>
+      <div class="card-b">
+        <p class="idea"><b>Drawers on springs.</b> Each one opens with a little overshoot, so the drawers below bump and settle. With a mouse you can grab a header and pull the drawer open, and it snaps the rest of the way.</p>
+        <div class="try"><span>Try</span><span>click</span><span>drag a header down</span><span>open two</span></div>
+      </div>
+    </article>
+</main>
+<script src="spring.js"></script>
+<script>
+/* ---------- 09 Spring drawers ---------- */
+document.querySelectorAll('.drawer').forEach(function(d){
+  var btn = d.querySelector('h3 button'), panel = d.querySelector('.drawer-panel'), inner = d.querySelector('.drawer-inner'), icon = d.querySelector('.drawer-icon');
+  var open = btn.getAttribute('aria-expanded') === 'true', H = new Spring(0, 240, 17), drag = null;
+  function full(){ return inner.offsetHeight; }
+  function render(){
+    var h = Math.max(0, H.x), p = clamp(h / Math.max(1, full()), 0, 1.15);
+    panel.style.height = h.toFixed(1) + 'px';
+    panel.style.visibility = (h < .5 && !open && !drag) ? 'hidden' : 'visible';
+    icon.style.transform = 'rotate(' + (p * 135).toFixed(1) + 'deg)';
+    inner.style.transform = 'translateY(' + ((1 - Math.min(p, 1)) * -10).toFixed(1) + 'px)';
+  }
+  var L = Loop(function(dt){ var done = H.step(dt); render(); return done && !drag; }, function(){ H.snap(); render(); });
+  function set(v, vel){ open = v; btn.setAttribute('aria-expanded', String(open)); H.t = open ? full() : 0; if (vel) H.v = vel; L.kick(); }
+  btn.addEventListener('pointerdown', function(e){ if (e.pointerType === 'touch') return; H.k = 1600; H.d = 80; drag = { y: e.clientY, base: H.x, moved: false, ly: e.clientY, lt: performance.now(), v: 0 }; btn.setPointerCapture(e.pointerId); });
+  btn.addEventListener('pointermove', function(e){ if (!drag) return; var dy = e.clientY - drag.y; if (Math.abs(dy) > 5) drag.moved = true; if (!drag.moved) return;
+    var now = performance.now(); drag.v = (e.clientY - drag.ly) / Math.max(1, now - drag.lt) * 1000; drag.ly = e.clientY; drag.lt = now;
+    var t = drag.base + dy, F = full(); if (t > F) t = F + (t - F) * .25; H.t = Math.max(0, t); L.kick(); });
+  function up(){ if (!drag) return; var dd = drag; drag = null; H.k = 240; H.d = 17; if (!dd.moved) return set(!open); set(H.x + dd.v * .15 > full() * .4, dd.v); }
+  btn.addEventListener('pointerup', up); btn.addEventListener('pointercancel', function(){ drag = null; H.k = 240; H.d = 17; set(open); });
+  btn.addEventListener('click', function(e){ if (e.detail === 0 || (e.pointerType === 'touch')) set(!open); });
+  render();
+});
+</script>
+</body>
+</html>
