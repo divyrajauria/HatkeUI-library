@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Squish stepper · Hatke UI lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* 10 Squish stepper */
+.squish{display:flex;align-items:center;justify-content:space-between;gap:20px;width:280px;max-width:100%}
+.squish-ctrl{display:flex;align-items:center;gap:8px}
+.squish button{display:grid;place-items:center;width:46px;height:46px;padding:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none}
+.squish button:hover{border-color:var(--ink)}
+.squish button[aria-disabled="true"]{opacity:.4}
+.squish button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.squish-num{display:inline-flex;justify-content:center;min-width:64px;padding:6px 10px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-family:var(--display);font-size:26px;font-weight:700;line-height:1.25;font-variant-numeric:tabular-nums}
+.squish-num.wall{color:var(--danger);border-color:var(--danger)}
+.dg{position:relative;display:inline-block;height:1.25em;overflow:hidden}
+.dg>span{display:block}
+.dg .in{animation:roll-in var(--rd,.3s) var(--out) both}
+.dg .out{position:absolute;inset:0;animation:roll-out var(--rd,.3s) var(--out) both}
+.squish-num.fast .dg{filter:blur(.6px)}
+@keyframes roll-in{from{transform:translateY(calc(var(--dir) * 100%))}}
+@keyframes roll-out{to{transform:translateY(calc(var(--dir) * -100%))}}
+</style>
+</head>
+<body class="solo">
+<main>
+<article class="card" id="stepper">
+      <div class="card-h"><span class="no">10</span><h2>Squish stepper</h2><span class="was">was: odometer</span></div>
+      <div class="stage"><div class="stage-inner">
+        <div class="squish" role="group" aria-labelledby="sq-l" data-min="1" data-max="20">
+          <span id="sq-l">Guests</span>
+          <div class="squish-ctrl">
+            <button type="button" data-d="-1" aria-label="Remove a guest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>
+            <span class="squish-num" aria-hidden="true">4</span>
+            <button type="button" data-d="1" aria-label="Add a guest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12"/></svg></button>
+          </div>
+          <span class="sr squish-live" aria-live="polite"></span>
+        </div>
+      </div></div>
+      <div class="card-b">
+        <p class="idea"><b>The buttons push the number.</b> Each press squeezes the number from that side, and the digits roll. Hold a button and it speeds up until the digits blur. At the limit the number squashes flat against the wall.</p>
+        <div class="try"><span>Try</span><span>tap</span><span>hold +</span><span>hit 20</span></div>
+      </div>
+    </article>
+</main>
+<script src="spring.js"></script>
+<script>
+/* ---------- 10 Squish stepper ---------- */
+document.querySelectorAll('.squish').forEach(function(s){
+  var num = s.querySelector('.squish-num'), live = s.querySelector('.squish-live'), btns = s.querySelectorAll('button[data-d]');
+  var min = +s.dataset.min, max = +s.dataset.max, n = parseInt(num.textContent, 10), holdT = 0, rate = 0;
+  function draw(old, dir, fast){
+    var len = Math.max(String(old).length, String(n).length), a = String(old).padStart(len), b = String(n).padStart(len);
+    num.textContent = ''; num.classList.toggle('fast', !!fast);
+    for (var k = 0; k < len; k++){
+      var col = document.createElement('span'), inn = document.createElement('span'); col.className = 'dg'; inn.textContent = b[k].trim();
+      col.style.setProperty('--rd', fast ? '.12s' : '.32s');
+      if (dir && a[k] !== b[k] && !RM.matches){ var o = document.createElement('span'); o.className = 'out'; o.textContent = a[k].trim(); inn.className = 'in'; col.style.setProperty('--dir', dir); col.appendChild(o); o.addEventListener('animationend', function(){ this.remove(); }); }
+      col.appendChild(inn); num.appendChild(col);
+    }
+  }
+  function sync(){ btns.forEach(function(b){ b.setAttribute('aria-disabled', String(+b.dataset.d < 0 ? n <= min : n >= max)); }); }
+  function squeeze(d, hard){
+    if (RM.matches) return;
+    num.style.transformOrigin = d > 0 ? 'left center' : 'right center';
+    var sx = hard ? .66 : .84;
+    num.animate([{ transform: 'none' }, { transform: 'scale(' + sx + ',' + (2 - sx) * .98 + ')', offset: .3 }, { transform: 'scale(1.04,.97)', offset: .65 }, { transform: 'none' }], { duration: hard ? 420 : 300, easing: 'ease-out' });
+  }
+  function step(d, fast){
+    var next = n + d;
+    if (next < min || next > max){
+      squeeze(d, true); num.classList.add('wall'); setTimeout(function(){ num.classList.remove('wall'); }, 380);
+      live.textContent = (d > 0 ? 'Maximum is ' : 'Minimum is ') + (d > 0 ? max : min); stop(); return;
+    }
+    var old = n; n = next; draw(old, d, fast); squeeze(d, false); sync(); live.textContent = 'Guests: ' + n;
+  }
+  function stop(){ clearTimeout(holdT); holdT = 0; if (num.classList.contains('fast')) num.classList.remove('fast'); }
+  btns.forEach(function(b){
+    var d = +b.dataset.d;
+    b.addEventListener('pointerdown', function(e){
+      if (e.button) return; step(d); rate = 380;
+      (function rep(){ holdT = setTimeout(function(){ rate = Math.max(45, rate * .72); step(d, rate < 120); if (holdT) rep(); }, rate); })();
+    });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(function(ev){ b.addEventListener(ev, stop); });
+    b.addEventListener('click', function(e){ if (e.detail === 0) step(d); }); // keyboard
+  });
+  draw(n, 0); sync();
+});
+</script>
+</body>
+</html>
