@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Scatter button · Hatke UI lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* 03 Scatter button */
+.scatter-wrap{display:grid;justify-items:center;gap:10px}
+.scatter{position:relative;height:50px;padding:0 28px;border:0;border-radius:999px;background:var(--ink);color:var(--surface);font-weight:600;cursor:pointer;transition:background-color .25s,transform .3s var(--spring);-webkit-tap-highlight-color:transparent}
+.scatter:active{transform:scale(.95);transition-duration:.25s,.12s}
+.scatter[data-state="done"]{background:var(--accent);color:var(--on-accent)}
+.scatter[data-state="error"]{background:var(--danger);color:var(--on-accent)}
+.scatter-orbit{position:relative;display:inline-flex;align-items:center;height:100%}
+.ch{position:relative;display:inline-block;white-space:pre;transition:transform .55s var(--spring),color .2s}
+.ch::after{content:"";position:absolute;left:50%;top:50%;width:13px;height:13px;margin:-6.5px;border-radius:50%;background:currentColor;opacity:0;transition:opacity .25s}
+.scatter.dots .ch{color:transparent}
+.scatter.dots .ch:not(.sp)::after{opacity:1;background:var(--surface)}
+.scatter-done{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;opacity:0;transform:translateY(60%) rotateX(-80deg);transition:opacity .25s,transform .45s var(--spring)}
+.scatter-done svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+.scatter[data-state="done"] .scatter-done{opacity:1;transform:none}
+.scatter[data-state="done"] .scatter-orbit{opacity:0;transform:translateY(-60%) rotateX(80deg);transition:opacity .25s,transform .45s var(--spring)}
+.scatter-status{min-height:1.4em;font-size:14px;color:var(--sub)}
+.scatter-status.bad{color:var(--danger)}
+</style>
+</head>
+<body class="solo">
+<main>
+<article class="card" id="button">
+      <div class="card-h"><span class="no">03</span><h2>Scatter button</h2><span class="was">was: fold to a pulse</span></div>
+      <div class="stage"><div class="stage-inner">
+        <div class="scatter-wrap">
+          <button class="scatter" type="button" data-state="idle" data-label="Save changes"><span class="sr">Save changes</span><span class="scatter-orbit" aria-hidden="true"></span><span class="scatter-done" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Saved</span></button>
+          <p class="scatter-status" role="status"></p>
+          <label class="demo-opt"><input type="checkbox" id="fail-next"> Make the next save fail</label>
+        </div>
+      </div></div>
+      <div class="card-b">
+        <p class="idea"><b>The words do the waiting.</b> While it saves, the label breaks into dots that orbit. Success flips it to “Saved”. A failure brings the letters back scrambled, then they shake into the right order.</p>
+        <div class="try"><span>Try</span><span>click</span><span>fail it</span><span>Enter</span></div>
+      </div>
+    </article>
+</main>
+<script src="spring.js"></script>
+<script>
+/* ---------- 03 Scatter button ---------- */
+(function(){
+  var b = document.querySelector('.scatter'), orbit = b.querySelector('.scatter-orbit'), status = document.querySelector('.scatter-status');
+  var label = b.dataset.label, chs = [], spin = null;
+  label.split('').forEach(function(c){ var s = document.createElement('span'); s.className = 'ch' + (c === ' ' ? ' sp' : ''); s.textContent = c; orbit.appendChild(s); chs.push(s); });
+  function homes(){ return chs.map(function(c){ return c.offsetLeft + c.offsetWidth / 2; }); }
+  function each(fn){ chs.forEach(fn); }
+  function stopSpin(){
+    if (!spin) return 0;
+    var a = (spin.currentTime % 1100) / 1100 * 360; spin.cancel(); spin = null;
+    orbit.animate([{ transform: 'rotate(' + a + 'deg)' }, { transform: 'rotate(' + (a > 180 ? 360 : 0) + 'deg)' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  }
+  b.addEventListener('click', function(){
+    if (b.dataset.state !== 'idle') return;
+    b.dataset.state = 'loading'; b.setAttribute('aria-busy', 'true'); status.textContent = ''; status.classList.remove('bad');
+    if (!RM.matches){
+      var h = homes(), cx = orbit.offsetWidth / 2, dots = chs.filter(function(c){ return !c.classList.contains('sp'); });
+      dots.forEach(function(c, i){
+        var th = i / dots.length * Math.PI * 2 - Math.PI / 2, R = 13, idx = chs.indexOf(c);
+        c.style.transitionDelay = (i * 22) + 'ms';
+        c.style.transform = 'translate(' + (cx + Math.cos(th) * R - h[idx]).toFixed(1) + 'px,' + (Math.sin(th) * R).toFixed(1) + 'px) scale(.34)';
+      });
+      b.classList.add('dots');
+      setTimeout(function(){ if (b.dataset.state === 'loading') spin = orbit.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], { duration: 1100, iterations: Infinity }); }, 520);
+    } else { orbit.style.opacity = .5; }
+    var fail = document.getElementById('fail-next').checked;
+    setTimeout(function(){ finish(fail ? 'error' : 'done'); }, 1500); // replace with your request
+  });
+  function finish(r){
+    b.removeAttribute('aria-busy'); stopSpin(); b.classList.remove('dots'); orbit.style.opacity = '';
+    status.textContent = r === 'done' ? 'Saved' : 'Couldn’t save. Try again.'; status.classList.toggle('bad', r === 'error');
+    if (r === 'done'){
+      each(function(c, i){ c.style.transitionDelay = (i * 14) + 'ms'; c.style.transform = ''; });
+      b.dataset.state = 'done';
+      setTimeout(function(){ b.dataset.state = 'idle'; }, 1500);
+    } else {
+      var h = homes(), perm = chs.map(function(_, i){ return i; }).sort(function(){ return Math.random() - .5; });
+      b.dataset.state = 'error';
+      each(function(c, i){ c.style.transitionDelay = (i * 14) + 'ms'; c.style.transform = RM.matches ? '' : 'translate(' + (h[perm[i]] - h[i]).toFixed(1) + 'px,' + (i % 2 ? 3 : -3) + 'px)'; });
+      setTimeout(function(){
+        each(function(c, i){ c.style.transitionDelay = (i * 18) + 'ms'; c.style.transform = ''; });
+        if (!RM.matches) b.animate([{ transform: 'none' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(-3px)' }, { transform: 'translateX(1px)' }, { transform: 'none' }], { duration: 440, delay: 120 });
+      }, 650);
+      setTimeout(function(){ b.dataset.state = 'idle'; }, 1600);
+    }
+  }
+})();
+</script>
+</body>
+</html>
