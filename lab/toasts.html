@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Toast pile · Hatke UI lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* 06 Toast pile */
+.pile-stage{min-height:340px}
+.pile-trigger,.squish button,.lab-btn{min-height:44px;padding:0 18px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-weight:500;cursor:pointer;transition:transform .3s var(--spring),border-color .18s}
+.pile-trigger:hover{border-color:var(--ink)}
+.pile-trigger:active{transform:scale(.95);transition-duration:.12s}
+.pile{position:absolute;left:50%;bottom:22px;width:min(320px,calc(100% - 32px));transform:translateX(-50%);margin:0;padding:0;list-style:none}
+.card-t{--i:0;position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:10px;min-height:58px;padding:6px 6px 6px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 8px 24px rgba(15,20,30,.13);font-size:14px;touch-action:pan-y;cursor:grab;user-select:none;
+  transform:translate(var(--dx),calc(var(--i) * -7px)) rotate(var(--rot)) scale(calc(1 - var(--i) * .035));transform-origin:50% 100%;
+  transition:transform .45s var(--spring),opacity .3s;animation:pile-drop .55s var(--spring)}
+.card-t::after{content:"";position:absolute;left:0;right:0;top:100%;height:10px}
+.pile:hover .card-t,.pile:focus-within .card-t{transform:translateY(calc(var(--i) * (-100% - 8px))) rotate(0deg)}
+.card-t.gone{opacity:0;pointer-events:none}
+.card-t.buried{opacity:0;pointer-events:none}
+.card-t .t{flex:1;min-width:0}
+.card-t .x{flex:none;width:44px;height:44px;border:0;border-radius:10px;background:none;color:var(--sub);font-size:20px;cursor:pointer}
+.card-t .x:hover{background:var(--muted);color:var(--ink)}
+.fuse{position:absolute;left:16px;right:16px;bottom:6px;height:2px}
+.fuse-line{position:absolute;inset:0;border-radius:2px;background:color-mix(in srgb,var(--accent) 50%,transparent);transform-origin:left;animation:burn 5s linear forwards}
+.spark{position:absolute;top:-3px;left:100%;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent),0 0 10px var(--accent);animation:spark 5s linear forwards,flicker .18s steps(2) infinite}
+.pile:hover .fuse-line,.pile:hover .spark,.pile:focus-within .fuse-line,.pile:focus-within .spark{animation-play-state:paused}
+@keyframes burn{to{transform:scaleX(0)}}
+@keyframes spark{to{left:0}}
+@keyframes flicker{50%{transform:scale(.7)}}
+@keyframes pile-drop{from{transform:translate(var(--dx),-160px) rotate(calc(var(--rot) * -4));opacity:0}}
+.pile-empty{position:absolute;left:50%;bottom:44px;transform:translateX(-50%);font-size:13px;color:var(--sub);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){
+  .fuse-line{animation-duration:5s!important} /* the fuse is a timer, not decoration: keep its length */
+  .spark{display:none}
+}
+
+</style>
+</head>
+<body class="solo">
+<main>
+<article class="card" id="toasts">
+      <div class="card-h"><span class="no">06</span><h2>Toast pile</h2><span class="was">was: deck with timers</span></div>
+      <div class="stage pile-stage"><div class="stage-inner" style="align-self:start">
+        <button class="pile-trigger" type="button">Drop a toast</button>
+      </div>
+        <p class="pile-empty">No notifications</p>
+        <ol class="pile" aria-live="polite" aria-label="Notifications"></ol>
+      </div>
+      <div class="card-b">
+        <p class="idea"><b>Notes tossed onto a pile, each on a lit fuse.</b> Toasts land crooked and bounce. A spark burns along each fuse, and the note flies off when it reaches the end. Hover or focus to fan the pile out and pause every fuse. Throw a note away.</p>
+        <div class="try"><span>Try</span><span>drop five</span><span>hover the pile</span><span>throw one</span></div>
+      </div>
+    </article>
+</main>
+<script src="spring.js"></script>
+<script>
+/* ---------- 06 Toast pile ---------- */
+(function(){
+  var pile = document.querySelector('.pile'), empty = document.querySelector('.pile-empty'), trig = document.querySelector('.pile-trigger');
+  var msgs = ['Invite sent to sam@studio.co', 'Link copied', 'Changes saved', '3 files uploaded', 'Maya joined the project'], n = 0;
+  function layout(){
+    var live = [].slice.call(pile.querySelectorAll('.card-t:not(.gone)')).reverse();
+    live.forEach(function(t, i){ t.style.setProperty('--i', i); t.classList.toggle('buried', i > 3); });
+    empty.hidden = live.length > 0;
+  }
+  function fling(t, vx, vy){
+    if (t.classList.contains('gone')) return; t.classList.add('gone'); layout();
+    var dx = (vx || 1) * 420, dy = (vy || -.3) * 260;
+    if (RM.matches){ t.remove(); return; }
+    t.animate([{ translate: (t.style.translate || '0px 0px') }, { translate: dx + 'px ' + dy + 'px' }], { duration: 420, easing: 'cubic-bezier(.3,.6,.4,1)' });
+    t.animate([{ rotate: (t.style.rotate || '0deg') }, { rotate: (vx > 0 ? 40 : -40) + 'deg' }], { duration: 420 });
+    setTimeout(function(){ t.remove(); }, 400);
+  }
+  function drop(text){
+    var t = document.createElement('li'); t.className = 'card-t';
+    t.style.setProperty('--rot', (Math.random() * 8 - 4).toFixed(1) + 'deg');
+    t.style.setProperty('--dx', (Math.random() * 16 - 8).toFixed(1) + 'px');
+    t.innerHTML = '<span class="t"></span><button type="button" class="x" aria-label="Dismiss">×</button><span class="fuse" aria-hidden="true"><span class="fuse-line"></span><span class="spark"></span></span>';
+    t.querySelector('.t').textContent = text;
+    t.querySelector('.x').addEventListener('click', function(){ fling(t, 1, -.4); });
+    t.querySelector('.fuse-line').addEventListener('animationend', function(){ fling(t, 1, -.6); });
+    var d = null;
+    t.addEventListener('pointerdown', function(e){ if (e.target.closest('button')) return; d = { x: e.clientX, y: e.clientY, lx: e.clientX, lt: performance.now(), v: 0 }; t.setPointerCapture(e.pointerId); t.style.transition = 'none'; });
+    t.addEventListener('pointermove', function(e){ if (!d) return; var now = performance.now(); d.v = (e.clientX - d.lx) / Math.max(1, now - d.lt); d.lx = e.clientX; d.lt = now;
+      var dx = e.clientX - d.x, dy = (e.clientY - d.y) * .4; t.style.translate = dx + 'px ' + dy + 'px'; t.style.rotate = (dx * .08) + 'deg'; });
+    function end(){ if (!d) return; var dx = d.lx - d.x, v = d.v; d = null; t.style.transition = '';
+      if (Math.abs(dx) > 90 || Math.abs(v) > .6) fling(t, dx > 0 ? 1 : -1, -.2); else { t.style.translate = ''; t.style.rotate = ''; } }
+    t.addEventListener('pointerup', end); t.addEventListener('pointercancel', end);
+    pile.appendChild(t);
+    var live = pile.querySelectorAll('.card-t:not(.gone)'); if (live.length > 6) fling(live[0], -1, -.2);
+    layout();
+  }
+  trig.addEventListener('click', function(){ drop(msgs[n++ % msgs.length]); });
+  layout();
+})();
+</script>
+</body>
+</html>
