@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jelly toggle · Hatke UI lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* 01 Jelly toggle */
+.jelly-row{display:flex;align-items:center;justify-content:space-between;gap:24px;width:260px;max-width:100%}
+.jelly{position:relative;flex:none;width:68px;height:38px;padding:0;border:0;border-radius:999px;background:var(--muted);cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent}
+.jelly:active{cursor:grabbing}
+.jelly::before{content:"";position:absolute;inset:-4px}
+.jelly-fill{position:absolute;inset:0;border-radius:inherit;background:var(--accent);opacity:0}
+.jelly-knob{position:absolute;left:4px;top:4px;width:30px;height:30px;border-radius:50%;background:var(--knob);box-shadow:0 1px 2px rgba(0,0,0,.2),0 4px 10px rgba(0,0,0,.12);will-change:transform}
+</style>
+</head>
+<body class="solo">
+<main>
+<article class="card" id="toggle">
+      <div class="card-h"><span class="no">01</span><h2>Jelly toggle</h2><span class="was">was: ink trail</span></div>
+      <div class="stage"><div class="stage-inner">
+        <div class="jelly-row"><span id="j1">Airplane mode</span><button class="jelly" role="switch" aria-checked="false" aria-labelledby="j1"><span class="jelly-fill"></span><span class="jelly-knob"></span></button></div>
+        <div class="jelly-row"><span id="j2">Wi-Fi</span><button class="jelly" role="switch" aria-checked="true" aria-labelledby="j2"><span class="jelly-fill"></span><span class="jelly-knob"></span></button></div>
+      </div></div>
+      <div class="card-b">
+        <p class="idea"><b>The knob is jelly on a spring.</b> It squashes when pressed, stretches with its speed, overshoots and wobbles into place. You can grab it and throw it.</p>
+        <div class="try"><span>Try</span><span>tap</span><span>drag the knob</span><span>flick it</span><span>Space</span></div>
+      </div>
+    </article>
+</main>
+<script src="spring.js"></script>
+<script>
+/* ---------- 01 Jelly toggle ---------- */
+document.querySelectorAll('.jelly').forEach(function(b){
+  var knob = b.querySelector('.jelly-knob'), fill = b.querySelector('.jelly-fill'), MAX = 30;
+  var on = b.getAttribute('aria-checked') === 'true';
+  var s = new Spring(on ? MAX : 0, 420, 20), p = new Spring(0, 600, 30), drag = null;
+  function render(){
+    var st = Math.min(Math.abs(s.v) / 700, .6), sq = p.x;
+    var over = s.x < 0 ? -s.x : s.x > MAX ? s.x - MAX : 0; // squash on impact with the wall
+    var sx = 1 + st + sq * .22 - over * .02, sy = 1 - st * .35 - sq * .1 + over * .02;
+    knob.style.transform = 'translateX(' + s.x.toFixed(2) + 'px) scale(' + sx.toFixed(3) + ',' + sy.toFixed(3) + ')';
+    var f = clamp(s.x / MAX, 0, 1);
+    fill.style.opacity = f.toFixed(3);
+    fill.style.clipPath = 'inset(0 ' + (68 - (s.x + 34 + 4 * f)).toFixed(1) + 'px 0 0 round 999px)';
+  }
+  var L = Loop(function(dt){ var a = s.step(dt), c = p.step(dt); render(); return a && c && !drag; }, function(){ s.snap(); p.snap(); render(); });
+  function set(v, vel){ on = v; b.setAttribute('aria-checked', String(on)); s.t = on ? MAX : 0; if (vel) s.v = clamp(vel, -2500, 2500); L.kick(); }
+  b.addEventListener('pointerdown', function(e){
+    b.setPointerCapture(e.pointerId);
+    drag = { x0: e.clientX, s0: s.x, moved: false, lx: e.clientX, lt: performance.now(), vel: 0 };
+    p.t = 1; L.kick();
+  });
+  b.addEventListener('pointermove', function(e){
+    if (!drag) return;
+    var dx = e.clientX - drag.x0; if (Math.abs(dx) > 3) drag.moved = true; if (!drag.moved) return;
+    var now = performance.now(); drag.vel = (e.clientX - drag.lx) / Math.max(1, now - drag.lt) * 1000; drag.lx = e.clientX; drag.lt = now;
+    var t = drag.s0 + dx; if (t < 0) t *= .3; if (t > MAX) t = MAX + (t - MAX) * .3; // rubber-band past the ends
+    s.t = t; L.kick();
+  });
+  function up(){ if (!drag) return; var d = drag; drag = null; p.t = 0;
+    if (!d.moved) set(!on); else set(s.x + d.vel * .1 > MAX / 2, d.vel); }
+  b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+  b.addEventListener('click', function(e){ if (e.detail === 0) { p.v = 18; set(!on); } }); // keyboard: Space / Enter
+  render();
+});
+</script>
+</body>
+</html>
