@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hatke UI lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lab.css">
+<style>
+.wrap{max-width:880px;margin:0 auto;display:grid;gap:40px}
+.top{display:grid;gap:16px}
+.top h1{font-size:clamp(52px,10vw,120px);line-height:.9;letter-spacing:-.05em}
+.lede{font-size:clamp(18px,2.2vw,22px);max-width:38ch;line-height:1.4}
+.laws{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.laws>div{background:var(--surface);padding:18px 20px;display:grid;gap:6px;align-content:start}
+.laws b{font-family:var(--display);font-size:17px;letter-spacing:-.01em}
+.laws p{color:var(--sub);font-size:14px}
+.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.list a{display:grid;grid-template-columns:40px 220px 1fr;gap:16px;padding:18px 4px;border-bottom:1px solid var(--line);color:inherit;text-decoration:none;transition:background-color .18s}
+.list a:hover{background:var(--surface)}
+.list .no{font-family:var(--mono);font-size:12px;color:var(--sub);padding-top:4px}
+.list .nm{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.02em}
+.list .id{color:var(--sub);font-size:14px}
+.list .id b{color:var(--ink);font-weight:600}
+@media (max-width:900px){.laws{grid-template-columns:1fr}}
+@media (max-width:600px){.list a{grid-template-columns:32px 1fr}.list .id{grid-column:2}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">Hatke UI · v1 lab · not standard on purpose</span>
+    <h1>Hatke UI</h1>
+    <p class="lede">Ten everyday controls, each rebuilt around a physical idea: jelly, ink, string, gravity. Open one, tap it normally, then play with it.</p>
+  </header>
+  <section class="laws" aria-label="Rules every component keeps">
+    <div><b>Tap always works.</b><p>Drag, fling, hold and pluck are extras. A plain tap or keypress still does exactly what you expect.</p></div>
+    <div><b>Never wait on the fun.</b><p>The state changes the moment you act. The motion plays on top and can be interrupted at any point.</p></div>
+    <div><b>Calm when asked.</b><p>With reduced motion on, every component still works and still changes state, with the physics switched off.</p></div>
+  </section>
+  <ol class="list">
+    <li><a href="toggle.html"><span class="no">01</span><span class="nm">Jelly toggle</span><span class="id"><b>The knob is jelly on a spring.</b> It squashes when pressed, stretches with its speed, overshoots and wobbles into place. You can grab it and throw it.</span></a></li>
+    <li><a href="checkbox.html"><span class="no">02</span><span class="nm">Rubber-stamp checkbox</span><span class="id"><b>Every check is stamped by hand.</b> The box sinks and pools ink while you press. On release the check slams in at a slightly different angle each time, ink spatters, and the label does a little cheer. Uncheck it and the check falls off.</span></a></li>
+    <li><a href="button.html"><span class="no">03</span><span class="nm">Scatter button</span><span class="id"><b>The words do the waiting.</b> While it saves, the label breaks into dots that orbit. Success flips it to “Saved”. A failure brings the letters back scrambled, then they shake into the right order.</span></a></li>
+    <li><a href="tabs.html"><span class="no">04</span><span class="nm">Lens tabs</span><span class="id"><b>A liquid lens slides under the words.</b> Its front edge leaps and its back edge catches up on a spring. Letters change colour exactly where the lens passes, even halfway through a word. Hover a tab and the lens leans toward it.</span></a></li>
+    <li><a href="tooltip.html"><span class="no">05</span><span class="nm">Balloon tooltip</span><span class="id"><b>The tooltip is a balloon on a string.</b> It pops up from the button, bobs gently, swings when it travels to the next button, and leans toward your pointer.</span></a></li>
+    <li><a href="toasts.html"><span class="no">06</span><span class="nm">Toast pile</span><span class="id"><b>Notes tossed onto a pile, each on a lit fuse.</b> Toasts land crooked and bounce. A spark burns along each fuse, and the note flies off when it reaches the end. Hover or focus to fan the pile out and pause every fuse. Throw a note away.</span></a></li>
+    <li><a href="slider.html"><span class="no">07</span><span class="nm">Pluck slider</span><span class="id"><b>The track is a guitar string.</b> Drag the thumb and the string bends under it. Pull up or down while you drag, let go, and it twangs and settles. The number shakes with it.</span></a></li>
+    <li><a href="input.html"><span class="no">08</span><span class="nm">Gravity field</span><span class="id"><b>Letters have weight.</b> Each character drops into the field and lands with a bounce. Delete one and it falls out of the bottom. A character the field can't take bounces off and flies away.</span></a></li>
+    <li><a href="accordion.html"><span class="no">09</span><span class="nm">Spring drawers</span><span class="id"><b>Drawers on springs.</b> Each one opens with a little overshoot, so the drawers below bump and settle. With a mouse you can grab a header and pull the drawer open, and it snaps the rest of the way.</span></a></li>
+    <li><a href="stepper.html"><span class="no">10</span><span class="nm">Squish stepper</span><span class="id"><b>The buttons push the number.</b> Each press squeezes the number from that side, and the digits roll. Hold a button and it speeds up until the digits blur. At the limit the number squashes flat against the wall.</span></a></li>
+  </ol>
+</div>
+</body>
+</html>
