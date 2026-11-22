@@ -1,0 +1,50 @@
+
+/* Hatke UI lab: shared tokens, page and card styles. Each component page adds its own styles. */
+:root{
+  --bg:#ECEEF1; --surface:#FFFFFF; --ink:#121418; --sub:#5A606C; --line:#D5D9DF; --accent:#2F54EB; --muted:#DDE1E7;
+  --danger:#D92D20; --knob:#FFFFFF; --on-accent:#FFFFFF;
+  --display:"Bricolage Grotesque","Inter",system-ui,sans-serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --spring:cubic-bezier(.34,1.56,.64,1); --out:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0D0F12; --surface:#15181D; --ink:#ECEEF2; --sub:#9EA5B1; --line:#2A2F37; --accent:#7B93FF; --muted:#2C313A;
+  --danger:#FF7366; --knob:#F4F5F7; --on-accent:#0B0D10; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0D0F12; --surface:#15181D; --ink:#ECEEF2; --sub:#9EA5B1; --line:#2A2F37; --accent:#7B93FF; --muted:#2C313A;
+  --danger:#FF7366; --knob:#F4F5F7; --on-accent:#0B0D10; color-scheme:dark }
+
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:44px}
+h1,h2{font-family:var(--display);font-weight:700;letter-spacing:-.03em;text-wrap:balance;margin:0}
+p{margin:0;text-wrap:pretty}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;display:grid;grid-template-rows:auto minmax(280px,auto) auto;align-content:start;min-width:0;overflow:hidden}
+.card-h{display:flex;align-items:baseline;gap:12px;padding:18px 20px 14px;flex-wrap:wrap}
+.card-h .no{font-family:var(--mono);font-size:12px;color:var(--sub)}
+.card-h h2{font-size:22px}
+.card-h .was{font-family:var(--mono);font-size:11px;color:var(--sub);margin-left:auto}
+.stage{position:relative;display:grid;place-items:center;padding:28px 20px;border-block:1px solid var(--line);
+  background-color:var(--bg);background-image:radial-gradient(color-mix(in srgb,var(--sub) 28%,transparent) 1px,transparent 1.2px);background-size:16px 16px;overflow:hidden;min-width:0}
+.stage-inner{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;gap:16px;width:100%;min-width:0}
+.card-b{padding:18px 20px 20px;display:grid;gap:12px;min-width:0}
+.idea b{font-weight:600}
+.try{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.try span{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--sub)}
+.try span:first-child{border:0;padding-left:0;text-transform:uppercase;letter-spacing:.1em}
+.demo-opt{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--sub);min-height:32px;cursor:pointer}
+.demo-opt input{width:16px;height:16px;accent-color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* a component on its own page */
+.solo{display:grid;place-items:start center;min-height:100dvh}
+.solo .card{width:min(560px,100%)}
+@media (max-width:600px){.stage{padding:24px 12px}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
