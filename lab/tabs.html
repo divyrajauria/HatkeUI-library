@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lens tabs · Hatke UI lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* 04 Lens tabs */
+.lens{width:360px;max-width:100%}
+.lens-list{position:relative;display:flex;gap:2px;padding:4px;border-radius:999px;background:var(--surface);border:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.lens-list::-webkit-scrollbar{display:none}
+.lens-pill{position:absolute;left:0;top:4px;bottom:4px;width:10px;border-radius:999px;background:var(--accent);pointer-events:none;will-change:transform,width}
+.lens-list [role=tab],.lens-ghost span{flex:none;min-height:40px;padding:0 15px;border:0;border-radius:999px;background:none;font-weight:500;display:inline-flex;align-items:center;white-space:nowrap}
+.lens-list [role=tab]{position:relative;color:var(--sub);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:color .2s}
+.lens-list [role=tab]:hover{color:var(--ink)}
+.lens-list [role=tab]:focus-visible{outline-offset:-2px}
+.lens-ghost{position:absolute;inset:4px;display:flex;gap:2px;color:var(--on-accent);pointer-events:none;width:max-content}
+.lens-panel{padding:16px 6px 0;line-height:1.55;animation:lens-in .4s var(--out)}
+@keyframes lens-in{from{opacity:0;transform:translateX(var(--dx,0)) skewX(calc(var(--dx,0px) * -.4deg))}}
+</style>
+</head>
+<body class="solo">
+<main>
+<article class="card" id="tabs">
+      <div class="card-h"><span class="no">04</span><h2>Lens tabs</h2><span class="was">was: inchworm</span></div>
+      <div class="stage"><div class="stage-inner">
+        <div class="lens">
+          <div class="lens-list" role="tablist" aria-label="Inbox">
+            <span class="lens-pill" aria-hidden="true"></span>
+            <button type="button" role="tab" id="lt1" aria-controls="lp1" aria-selected="true">All</button>
+            <button type="button" role="tab" id="lt2" aria-controls="lp2" aria-selected="false" tabindex="-1">Mentions</button>
+            <button type="button" role="tab" id="lt3" aria-controls="lp3" aria-selected="false" tabindex="-1">Drafts</button>
+            <button type="button" role="tab" id="lt4" aria-controls="lp4" aria-selected="false" tabindex="-1">Sent</button>
+            <div class="lens-ghost" aria-hidden="true"><span>All</span><span>Mentions</span><span>Drafts</span><span>Sent</span></div>
+          </div>
+          <div class="lens-panel" role="tabpanel" id="lp1" aria-labelledby="lt1" tabindex="0">Twelve conversations, three unread.</div>
+          <div class="lens-panel" role="tabpanel" id="lp2" aria-labelledby="lt2" tabindex="0" hidden>Maya mentioned you in Checkout review.</div>
+          <div class="lens-panel" role="tabpanel" id="lp3" aria-labelledby="lt3" tabindex="0" hidden>Two drafts, last edited yesterday.</div>
+          <div class="lens-panel" role="tabpanel" id="lp4" aria-labelledby="lt4" tabindex="0" hidden>Nothing sent this week.</div>
+        </div>
+      </div></div>
+      <div class="card-b">
+        <p class="idea"><b>A liquid lens slides under the words.</b> Its front edge leaps and its back edge catches up on a spring. Letters change colour exactly where the lens passes, even halfway through a word. Hover a tab and the lens leans toward it.</p>
+        <div class="try"><span>Try</span><span>hover</span><span>jump far</span><span>← →</span></div>
+      </div>
+    </article>
+</main>
+<script src="spring.js"></script>
+<script>
+/* ---------- 04 Lens tabs ---------- */
+document.querySelectorAll('.lens').forEach(function(root){
+  var list = root.querySelector('[role=tablist]'), pill = root.querySelector('.lens-pill'), ghost = root.querySelector('.lens-ghost');
+  var tabs = [].slice.call(list.querySelectorAll('[role=tab]'));
+  var cur = 0, hover = -1;
+  function edges(i){ var t = tabs[i]; return [t.offsetLeft - 4, t.offsetLeft - 4 + t.offsetWidth]; }
+  var e0 = edges(0), Ls = new Spring(e0[0], 260, 22), Rs = new Spring(e0[1], 260, 22), Ps = new Spring(1, 500, 22);
+  function render(){
+    var l = Ls.x, r = Math.max(Rs.x, l + 8), W = ghost.scrollWidth;
+    pill.style.transform = 'translateX(' + (l + 4).toFixed(2) + 'px) scaleY(' + Ps.x.toFixed(3) + ')';
+    pill.style.width = (r - l).toFixed(2) + 'px';
+    ghost.style.clipPath = 'inset(' + ((1 - Ps.x) * 20).toFixed(1) + 'px ' + (W - r).toFixed(2) + 'px ' + ((1 - Ps.x) * 20).toFixed(1) + 'px ' + l.toFixed(2) + 'px round 999px)';
+  }
+  var L = Loop(function(dt){ var a = Ls.step(dt), b = Rs.step(dt), c = Ps.step(dt); render(); return a && b && c; }, function(){ Ls.snap(); Rs.snap(); Ps.snap(); render(); });
+  function aim(dir){
+    var e = edges(cur), lean = 0;
+    if (hover >= 0 && hover !== cur) lean = hover > cur ? 1 : -1;
+    Ls.t = e[0] + (lean < 0 ? -10 : lean > 0 ? 4 : 0);
+    Rs.t = e[1] + (lean > 0 ? 10 : lean < 0 ? -4 : 0);
+    if (dir){ // the edge you are travelling toward leaps; the other one is dragged along
+      (dir > 0 ? Rs : Ls).k = 520; (dir > 0 ? Ls : Rs).k = 150;
+      (dir > 0 ? Rs : Ls).d = 26; (dir > 0 ? Ls : Rs).d = 16;
+    } else { Ls.k = Rs.k = 300; Ls.d = Rs.d = 24; }
+    L.kick();
+  }
+  function select(i, focus){
+    if (i === cur) return; var dir = i > cur ? 1 : -1;
+    tabs.forEach(function(t, j){ var on = j === i, p = document.getElementById(t.getAttribute('aria-controls'));
+      t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1;
+      if (p){ p.hidden = !on; if (on) p.style.setProperty('--dx', dir * 14 + 'px'); } });
+    cur = i; if (focus) tabs[i].focus(); aim(dir);
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener('click', function(){ select(i); });
+    t.addEventListener('pointerenter', function(e){ if (e.pointerType === 'touch') return; hover = i; aim(0); });
+    t.addEventListener('pointerleave', function(){ hover = -1; aim(0); });
+    t.addEventListener('pointerdown', function(){ Ps.t = .86; L.kick(); });
+  });
+  addEventListener('pointerup', function(){ if (Ps.t !== 1){ Ps.t = 1; L.kick(); } });
+  list.addEventListener('keydown', function(ev){ var n = tabs.length, k = ev.key;
+    var i = k === 'ArrowRight' ? (cur + 1) % n : k === 'ArrowLeft' ? (cur - 1 + n) % n : k === 'Home' ? 0 : k === 'End' ? n - 1 : -1;
+    if (i < 0) return; ev.preventDefault(); select(i, true); });
+  function reset(){ var e = edges(cur); Ls.x = Ls.t = e[0]; Rs.x = Rs.t = e[1]; render(); }
+  reset(); addEventListener('resize', reset); if (document.fonts) document.fonts.ready.then(reset);
+});
+</script>
+</body>
+</html>
