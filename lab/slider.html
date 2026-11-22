@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pluck slider · Hatke UI lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* 07 Pluck slider */
+.pluck{width:300px;max-width:100%}
+.pluck-head{display:flex;justify-content:space-between;align-items:baseline}
+.pluck-head label{font-size:14px;color:var(--sub)}
+.pluck-val{font-family:var(--display);font-size:34px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;display:inline-block}
+.pluck-area{position:relative;height:72px}
+.pluck-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.pluck-svg path{fill:none;stroke-width:3;stroke-linecap:round}
+.pl-on{stroke:var(--accent)}.pl-off{stroke:var(--muted)}
+.pluck-thumb{position:absolute;left:0;top:0;width:24px;height:24px;margin:-12px;border-radius:50%;background:var(--knob);box-shadow:0 0 0 1px rgba(0,0,0,.08),0 3px 8px rgba(0,0,0,.22);pointer-events:none;transition:scale .25s var(--spring)}
+.pluck.grab .pluck-thumb{scale:1.3}
+.pluck-area:has(input:focus-visible) .pluck-thumb{box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--accent)}
+.pluck input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:grab;touch-action:none}
+.pluck input:active{cursor:grabbing}
+</style>
+</head>
+<body class="solo">
+<main>
+<article class="card" id="slider">
+      <div class="card-h"><span class="no">07</span><h2>Pluck slider</h2><span class="was">was: bubble with weight</span></div>
+      <div class="stage"><div class="stage-inner">
+        <div class="pluck">
+          <div class="pluck-head"><label for="pl1">Volume</label><output class="pluck-val" for="pl1">40</output></div>
+          <div class="pluck-area"><svg class="pluck-svg" aria-hidden="true"><path class="pl-off"/><path class="pl-on"/></svg><span class="pluck-thumb" aria-hidden="true"></span><input id="pl1" type="range" min="0" max="100" value="40"></div>
+        </div>
+      </div></div>
+      <div class="card-b">
+        <p class="idea"><b>The track is a guitar string.</b> Drag the thumb and the string bends under it. Pull up or down while you drag, let go, and it twangs and settles. The number shakes with it.</p>
+        <div class="try"><span>Try</span><span>drag</span><span>drag and pull down</span><span>let go</span><span>← →</span></div>
+      </div>
+    </article>
+</main>
+<script src="spring.js"></script>
+<script>
+/* ---------- 07 Pluck slider ---------- */
+document.querySelectorAll('.pluck').forEach(function(root){
+  var area = root.querySelector('.pluck-area'), input = area.querySelector('input'), thumb = area.querySelector('.pluck-thumb'),
+      on = area.querySelector('.pl-on'), off = area.querySelector('.pl-off'), out = root.querySelector('.pluck-val');
+  var Y = new Spring(0, 900, 5), dragging = false;
+  function render(){
+    var W = area.clientWidth, mid = area.clientHeight / 2, min = +input.min, max = +input.max, f = (input.value - min) / (max - min);
+    var tx = 12 + f * (W - 24), ty = mid + Y.x;
+    on.setAttribute('d', 'M0,' + mid + ' Q' + (tx * .5).toFixed(1) + ',' + (mid + Y.x * .9).toFixed(1) + ' ' + tx.toFixed(1) + ',' + ty.toFixed(1));
+    off.setAttribute('d', 'M' + tx.toFixed(1) + ',' + ty.toFixed(1) + ' Q' + ((tx + W) * .5).toFixed(1) + ',' + (mid + Y.x * .9).toFixed(1) + ' ' + W + ',' + mid);
+    thumb.style.transform = 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px)';
+    out.textContent = input.value;
+    out.style.transform = 'translateY(' + (Y.x * -.25).toFixed(2) + 'px) rotate(' + (Y.x * .4).toFixed(2) + 'deg)';
+  }
+  var L = Loop(function(dt){ var done = Y.step(dt); render(); return done && !dragging; }, function(){ Y.t = 0; Y.snap(); render(); });
+  input.addEventListener('pointerdown', function(e){ dragging = true; root.classList.add('grab'); Y.k = 1400; Y.d = 40; L.kick(); });
+  area.addEventListener('pointermove', function(e){ if (!dragging) return; var r = area.getBoundingClientRect(); Y.t = clamp((e.clientY - r.top - r.height / 2) * .7, -22, 22); L.kick(); });
+  function release(){ if (!dragging) return; dragging = false; root.classList.remove('grab');
+    Y.k = 900; Y.d = 5; if (Math.abs(Y.x) < 3) Y.v += 260; Y.t = 0; L.kick(); }
+  addEventListener('pointerup', release); addEventListener('pointercancel', release);
+  input.addEventListener('input', function(){ render(); if (!dragging){ Y.k = 900; Y.d = 5; Y.v += 120; } L.kick(); });
+  render(); addEventListener('resize', render);
+});
+</script>
+</body>
+</html>
