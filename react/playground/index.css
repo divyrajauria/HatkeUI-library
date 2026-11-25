@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+/* Playground theme. The components only read the --hk-* variables, and each has a fallback,
+   so a component pasted into a project with none of these set still works. */
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+:root {
+  --hk-bg: #eceef1; --hk-paper: #ffffff; --hk-ink: #121418; --hk-sub: #5a606c; --hk-line: #d5d9df;
+  --hk-muted: #dde1e7; --hk-accent: #2f54eb; --hk-danger: #d92d20; --hk-knob: #ffffff; --hk-on-accent: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --hk-bg: #0d0f12; --hk-paper: #15181d; --hk-ink: #eceef2; --hk-sub: #9ea5b1; --hk-line: #2a2f37;
+    --hk-muted: #2c313a; --hk-accent: #7b93ff; --hk-danger: #ff7366; --hk-knob: #f4f5f7; --hk-on-accent: #0b0d10;
+    color-scheme: dark;
+  }
+}
+body { background: var(--hk-bg); color: var(--hk-ink); font-family: var(--font-sans); }
+:focus-visible { outline: 2px solid var(--hk-accent); outline-offset: 3px; }
